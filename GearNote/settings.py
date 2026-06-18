@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    # Custom apps
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -115,3 +118,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Dove mandare l'utente dopo un Login effettuato con successo
+LOGIN_REDIRECT_URL = 'accounts:profilo'
+
+# Dove mandare l'utente se tenta di accedere a una pagina protetta senza essere loggato
+LOGIN_URL = 'accounts:login'
+
+# Dove mandare l'utente subito dopo il Logout
+LOGOUT_REDIRECT_URL = 'accounts:login'

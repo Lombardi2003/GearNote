@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Accedi a UniSound</title>
+</head>
+<body>
+    <h2>Accedi al tuo account</h2>
+    
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Entra</button>
+    </form>
+
+    <p>Non hai un account? <a href="{% url 'accounts:registrati' %}">Registrati qui</a></p>
+</body>
+</html>

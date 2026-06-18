@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Area Personale - UniSound</title>
+</head>
+<body>
+    <h2>Pannello Utente</h2>
+    <p>Benvenuto, <strong>{{ request.user.username }}</strong>!</p>
+    
+    <h3>I tuoi dati:</h3>
+    <ul>
+        <li><strong>Email:</strong> {{ request.user.email }}</li>
+        <li><strong>Ruolo sulla piattaforma:</strong> {{ request.user.profilo.get_ruolo_display }}</li>
+    </ul>
+
+    <hr>
+    
+    <form action="{% url 'accounts:logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Disconnetti (Logout)</button>
+    </form>
+</body>
+</html>

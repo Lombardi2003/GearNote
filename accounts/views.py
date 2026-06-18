@@ -1,25 +1,49 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
+from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
-from .forms import RegistrazioneForm
+from django.urls import reverse_lazy
+from .forms import RegistrazionePersonalizzataForm
 
+# --- VISTA LOGIN PERSONALIZZATA (Smistamento Admin / Utenti) ---
+class CustomLoginView(LoginView):
+    template_name = 'accounts/login.html'
+    # Se uno è già loggato e va su /login/, lo rimbalziamo via
+    redirect_authenticated_user = True 
+
+    def get_success_url(self):
+        # Se chi ha fatto l'accesso è un Superuser (Admin)...
+        if self.request.user.is_superuser:
+            return '/admin/'  # ...va direttamente al pannello di controllo
+        # Altrimenti, è un utente normale e va al suo profilo
+        return reverse_lazy('accounts:profilo')
+
+
+# --- VISTA REGISTRAZIONE ---
 def registrazione_view(request):
+    if request.user.is_authenticated:
+        return redirect('accounts:profilo')
+
     if request.method == 'POST':
-        form = RegistrazioneForm(request.POST)
+        form = RegistrazionePersonalizzataForm(request.POST)
         if form.is_valid():
             user = form.save()
-            user.profilo.ruolo = form.cleaned_data.get('ruolo')
-            user.profilo.save()
             login(request, user)
-            # Reindirizza direttamente alla pagina del profilo appena creata
-            return redirect('accounts:profilo') 
+            return redirect('accounts:profilo')
     else:
-        form = RegistrazioneForm()
+        form = RegistrazionePersonalizzataForm()
         
     return render(request, 'accounts/registrazione.html', {'form': form})
 
-# Protegge la vista: se non sei loggato, vieni rimandato al login
-@login_required
+
+# --- VISTA LOGOUT ---
+def logout_view(request):
+    if request.method == 'POST':
+        logout(request)
+        return redirect('/')
+
+
+# --- VISTA PROFILO ---
+@login_required(login_url='accounts:login')
 def profilo_view(request):
-    # request.user contiene già tutti i dati dell'utente autenticato
     return render(request, 'accounts/profilo.html')

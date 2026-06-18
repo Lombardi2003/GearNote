@@ -11,6 +11,8 @@ class Profilo(models.Model):
     
     # Collega il profilo direttamente all'utente base di Django
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profilo')
+    eta = models.PositiveIntegerField(null=True, blank=True)
+    citta = models.CharField(max_length=100, null=True, blank=True)
     ruolo = models.CharField(max_length=20, choices=RUOLI_CHOICES, default='ACQUIRENTE')
 
     def __str__(self):

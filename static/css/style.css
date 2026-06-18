@@ -1,0 +1,206 @@
+/* =========================================
+   TAVOLOZZA DEI COLORI GLOBALE (Variabili)
+   ========================================= */
+:root {
+    --colore-sfondo: #f4f6f9;
+    --colore-bianco: #ffffff;
+    --testo-base: #333333;
+    --testo-titoli: #1a1a1a;
+    --testo-secondario: #555555;
+    --testo-chiaro: #666666;
+    
+    --arancione-base: #ff9800;
+    --arancione-scuro: #e67e22;
+    --ombra-arancione: rgba(255, 152, 0, 0.4);
+    
+    --rosso-logout: #e74c3c;
+    --rosso-logout-hover: #c0392b;
+    
+    --bordo-input: #dddddd;
+    --ombra-leggera: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --ombra-scheda: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* =========================================
+   1. RESET E SFONDO GLOBALE
+   ========================================= */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--colore-sfondo);
+    color: var(--testo-base);
+}
+
+/* =========================================
+   2. LA NAVBAR (Total White & Minimal)
+   ========================================= */
+.navbar {
+    background-color: var(--colore-bianco);
+    box-shadow: var(--ombra-leggera);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 50px;
+    position: sticky;
+    top: 0;
+}
+
+/* =========================================
+   3. IL LOGO
+   ========================================= */
+.logo a {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--testo-titoli);
+    text-decoration: none;
+    letter-spacing: -0.5px;
+}
+
+/* =========================================
+   4. I LINK DI NAVIGAZIONE
+   ========================================= */
+.nav-links a {
+    color: var(--testo-secondario);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    margin-left: 30px;
+    transition: color 0.2s ease-in-out;
+}
+
+/* Evitiamo che questa regola rompa l'animazione dei bottoni nella navbar */
+.nav-links a:not(.btn-primary):hover {
+    color: var(--arancione-scuro);
+}
+
+/* =========================================
+   5. CONTENITORE CENTRALE DELLA PAGINA
+   ========================================= */
+.container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+/* =========================================
+   6. MODULI DI AUTENTICAZIONE (Login & Registrazione)
+   ========================================= */
+.auth-card {
+    background: var(--colore-bianco);
+    max-width: 400px;
+    margin: 60px auto;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: var(--ombra-scheda);
+    text-align: center;
+}
+
+.auth-card h2 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    color: var(--testo-titoli);
+    font-size: 24px;
+}
+
+.auth-card p {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.auth-card label {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: var(--testo-secondario);
+}
+
+/* Regole per i campi in cui si digita (Aggiunto type="number" per l'Età) */
+.auth-card input[type="text"],
+.auth-card input[type="password"],
+.auth-card input[type="email"],
+.auth-card input[type="number"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--bordo-input);
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 15px;
+    transition: border-color 0.3s;
+    font-family: inherit;
+}
+
+/* Effetto quando si clicca dentro un campo */
+.auth-card input[type="text"]:focus,
+.auth-card input[type="password"]:focus,
+.auth-card input[type="email"]:focus,
+.auth-card input[type="number"]:focus {
+    border-color: var(--arancione-base);
+    outline: none;
+}
+
+/* Regola specifica per la spaziatura del bottone nel form */
+.auth-card .btn-submit {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px 20px !important; /* Lo fa leggermente più alto nel form */
+}
+
+.auth-card .auth-link {
+    display: block;
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--testo-chiaro);
+    text-decoration: none;
+}
+
+.auth-card .auth-link:hover {
+    color: var(--arancione-scuro);
+    text-decoration: underline;
+}
+
+/* =========================================
+   7. COMPONENTI GLOBALI (Tutti i bottoni unificati)
+   ========================================= */
+/* Classe universale per bottoni principali (Link <a> o Tasti <button>) */
+.btn-primary {
+    background-color: var(--arancione-base) !important;
+    color: var(--colore-bianco) !important;
+    padding: 10px 20px;
+    border: none !important;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: bold;
+    font-family: inherit; /* Forza il bottone a usare il font del sito */
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none !important;
+    display: inline-block;
+    box-sizing: border-box;
+    transition: all 0.3s ease !important; /* Forza la stessa fluidità su tutti */
+}
+
+.btn-primary:hover {
+    background-color: var(--arancione-scuro) !important;
+    color: var(--colore-bianco) !important;
+    transform: translateY(-2px) !important; /* Movimento verticale */
+    box-shadow: 0 4px 8px var(--ombra-arancione) !important; /* Ombra */
+}
+
+/* Tasto Esci (Logout) mimetizzato nel menu */
+.btn-logout {
+    background: none;
+    border: none;
+    color: var(--rosso-logout);
+    font-weight: 600;
+    font-size: 15px;
+    margin-left: 30px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: color 0.2s ease-in-out;
+}
+
+.btn-logout:hover {
+    color: var(--rosso-logout-hover);
+}

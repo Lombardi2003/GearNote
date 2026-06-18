@@ -1,18 +1,18 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <title>Accedi a UniSound</title>
-</head>
-<body>
-    <h2>Accedi al tuo account</h2>
+{% extends 'base.html' %}
+
+{% block title %}Accedi - GearNote{% endblock %}
+
+{% block content %}
+<div class="auth-card">
+    <h2>Bentornato!</h2>
     
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Entra</button>
+        
+        <button type="submit" class="btn-primary btn-submit">Entra</button>
     </form>
-
-    <p>Non hai un account? <a href="{% url 'accounts:registrati' %}">Registrati qui</a></p>
-</body>
-</html>
+    
+    <a href="{% url 'accounts:registrati' %}" class="auth-link">Non hai un account? Registrati qui.</a>
+</div>
+{% endblock content %}

@@ -1,18 +1,63 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <title>Registrati su UniSound</title>
-</head>
-<body>
-    <h2>Crea il tuo account UniSound</h2>
+{% extends 'base.html' %}
+
+{% block title %}Registrati - GearNote{% endblock %}
+
+{% block content %}
+<div class="auth-card" style="max-width: 700px;">
+    <h2>Crea un Account</h2>
     
-    <form method="post">
-        {% csrf_token %} 
+    <form method="post" novalidate>
+        {% csrf_token %}
         
-        {{ form.as_p }} 
+        {% if form.non_field_errors %}
+            <div style="color: var(--rosso-logout); margin-bottom: 15px; font-weight: bold; background: #fdf2f2; padding: 10px; border-radius: 6px;">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+
+            <div style="flex: 1; min-width: 250px;">
+                {% for field in form %}
+                    {% if field.name == 'nome' or field.name == 'cognome' or field.name == 'eta' or field.name == 'citta' %}
+                        <div style="margin-bottom: 15px; text-align: left;">
+                            <label for="{{ field.id_for_label }}" style="display: block; font-weight: 600; font-size: 14px; margin-bottom: 5px; color: var(--testo-secondario);">
+                                {{ field.label }}
+                            </label>
+                            
+                            {{ field }}
+                            
+                            {% for error in field.errors %}
+                                <div style="color: var(--rosso-logout); font-size: 13px; margin-top: 4px; font-weight: 600;">⚠ {{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <div style="flex: 1; min-width: 250px;">
+                {% for field in form %}
+                    {% if field.name != 'nome' and field.name != 'cognome' and field.name != 'eta' and field.name != 'citta' %}
+                        <div style="margin-bottom: 15px; text-align: left;">
+                            <label for="{{ field.id_for_label }}" style="display: block; font-weight: 600; font-size: 14px; margin-bottom: 5px; color: var(--testo-secondario);">
+                                {{ field.label }}
+                            </label>
+                            
+                            {{ field }}
+                            
+                            {% for error in field.errors %}
+                                <div style="color: var(--rosso-logout); font-size: 13px; margin-top: 4px; font-weight: 600;">⚠ {{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+        </div> 
         
-        <button type="submit">Registrati</button>
+        <button type="submit" class="btn-primary btn-submit" style="margin-top: 20px;">Registrati</button>
     </form>
-</body>
-</html>
+    
+    <a href="{% url 'accounts:login' %}" class="auth-link">Hai già un account? Accedi qui.</a>
+</div>
+{% endblock content %}

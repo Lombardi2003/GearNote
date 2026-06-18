@@ -1,24 +1,25 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <title>Area Personale - UniSound</title>
-</head>
-<body>
-    <h2>Pannello Utente</h2>
-    <p>Benvenuto, <strong>{{ request.user.username }}</strong>!</p>
-    
-    <h3>I tuoi dati:</h3>
-    <ul>
-        <li><strong>Email:</strong> {{ request.user.email }}</li>
-        <li><strong>Ruolo sulla piattaforma:</strong> {{ request.user.profilo.get_ruolo_display }}</li>
-    </ul>
+{% extends 'base.html' %}
 
-    <hr>
+{% block title %}Area Personale - GearNote{% endblock %}
+
+{% block content %}
+<div class="auth-card" style="max-width: 600px;"> <h2>Il tuo Profilo</h2>
     
-    <form action="{% url 'accounts:logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Disconnetti (Logout)</button>
-    </form>
-</body>
-</html>
+    <div style="text-align: left; margin-bottom: 20px;">
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        <p><strong>Nome:</strong> {{ user.first_name }}</p>
+        <p><strong>Cognome:</strong> {{ user.last_name }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        
+        <p><strong>Età:</strong> 
+            {% if user.profilo.eta %}
+                {{ user.profilo.eta }} anni
+            {% else %}
+                Non specificata
+            {% endif %}
+        </p>
+    </div>
+
+    <a href="/" class="btn-primary" style="width: 100%;">Torna alla Home</a>
+</div>
+{% endblock content %}

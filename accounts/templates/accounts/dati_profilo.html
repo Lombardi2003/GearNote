@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 
-{% block title %}Registrati - GearNote{% endblock %}
+{% block title %}
+    {% if user.is_authenticated %}Modifica Profilo{% else %}Registrati{% endif %} - GearNote
+{% endblock %}
 
 {% block content %}
 <div class="auth-card" style="max-width: 700px;">
-    <h2>Crea un Account</h2>
+    <h2>{% if user.is_authenticated %}Modifica Profilo{% else %}Crea un Account{% endif %}</h2>
     
     <form method="post" enctype="multipart/form-data" novalidate>
         {% csrf_token %}
@@ -16,14 +18,11 @@
         {% endif %}
 
         <div style="display: flex; gap: 30px; flex-wrap: wrap; margin-bottom: 15px;">
-            
             <div style="flex: 1; min-width: 250px; text-align: left;">
                 <label style="display: block; font-weight: 600; font-size: 14px; margin-bottom: 5px; color: var(--testo-secondario);">
                     Tipo di Account
                 </label>
-                
                 {{ form.ruolo }}
-
                 {% for error in form.ruolo.errors %}
                     <div style="color: var(--rosso-logout); font-size: 13px; margin-top: 4px; font-weight: 600;">⚠ {{ error }}</div>
                 {% endfor %}
@@ -44,6 +43,7 @@
             </div>
         </div>
 
+        {% if not user.is_authenticated %}
         <div style="display: flex; gap: 30px; flex-wrap: wrap; margin-bottom: 10px;">
             {% for field in form %}
                 {% if 'assword' in field.label %}
@@ -59,11 +59,11 @@
                 {% endif %}
             {% endfor %}
         </div>
-
         <hr>
+        {% endif %}
 
         <div style="display: flex; gap: 30px; flex-wrap: wrap;">
-
+            
             <div style="flex: 1; min-width: 250px;">
                 {% for field in form %}
                     {% if field.name == 'nome' or field.name == 'cognome' or field.name == 'eta' %}
@@ -83,56 +83,79 @@
             <div style="flex: 1; min-width: 250px;">
                 {% for field in form %}
                     {% if field.name != 'nome' and field.name != 'cognome' and field.name != 'eta' and field.name != 'ruolo' and field.name != 'username' and 'assword' not in field.label %}
+                        
                         <div style="margin-bottom: 15px; text-align: left;">
-                            <label for="{{ field.id_for_label }}" style="display: block; font-weight: 600; font-size: 14px; margin-bottom: 5px; color: var(--testo-secondario);">
-                                {{ field.label }}
-                            </label>
-                            {{ field }}
-                            {% for error in field.errors %}
-                                <div style="color: var(--rosso-logout); font-size: 13px; margin-top: 4px; font-weight: 600;">⚠ {{ error }}</div>
-                            {% endfor %}
+                            
+                            {% if field.name == 'elimina_foto' %}
+                                <div class="delete-photo-wrapper">
+                                    {{ field }}
+                                    <label for="{{ field.id_for_label }}" class="delete-photo-label">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="#d9534f" style="transition: fill 0.2s ease;">
+                                            <path d="M9 3v1H4v2h1v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6h1V4h-5V3H9zM7 6h10v13H7V6zm2 2v9h2V8H9zm4 0v9h2V8h-2z"/>
+                                        </svg>
+                                        {{ field.label }}
+                                    </label>
+                                </div>
+
+                            {% else %}
+                                <label for="{{ field.id_for_label }}" style="display: block; font-weight: 600; font-size: 14px; margin-bottom: 5px; color: var(--testo-secondario);">
+                                    {{ field.label }}
+                                </label>
+                                {{ field }}
+                                {% for error in field.errors %}
+                                    <div style="color: var(--rosso-logout); font-size: 13px; margin-top: 4px; font-weight: 600;">⚠ {{ error }}</div>
+                                {% endfor %}
+                            {% endif %}
+                            
                         </div>
+
                     {% endif %}
                 {% endfor %}
             </div>
 
         </div> 
         
-        <button type="submit" class="btn-primary btn-submit" style="margin-top: 20px;">Registrati</button>
+        <button type="submit" class="btn-primary btn-submit" style="margin-top: 20px;">
+            {% if user.is_authenticated %}Salva Modifiche{% else %}Registrati{% endif %}
+        </button>
     </form>
     
-    <a href="{% url 'accounts:login' %}" class="auth-link">Hai già un account? Accedi qui.</a>
+    {% if not user.is_authenticated %}
+        <a href="{% url 'accounts:login' %}" class="auth-link">Hai già un account? Accedi qui.</a>
+    {% endif %}
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const trigger = document.getElementById('customSelectTrigger');
-        const container = trigger.parentElement;
-        const options = document.querySelectorAll('.custom-option');
-        const hiddenInput = document.getElementById('id_ruolo_hidden');
+        if (trigger) {
+            const container = trigger.parentElement;
+            const options = document.querySelectorAll('.custom-option');
+            const hiddenInput = document.getElementById('id_ruolo_hidden');
 
-        trigger.addEventListener('click', function(e) {
-            container.classList.toggle('open');
-            e.stopPropagation();
-        });
+            trigger.addEventListener('click', function(e) {
+                container.classList.toggle('open');
+                e.stopPropagation();
+            });
 
-        options.forEach(option => {
-            option.addEventListener('click', function() {
-                const value = this.getAttribute('data-value');
-                const text = this.textContent;
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    const value = this.getAttribute('data-value');
+                    const text = this.textContent;
 
-                trigger.querySelector('span').textContent = text;
-                hiddenInput.value = value;
+                    trigger.querySelector('span').textContent = text;
+                    hiddenInput.value = value;
 
-                options.forEach(opt => opt.classList.remove('selected'));
-                this.classList.add('selected');
+                    options.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    container.classList.remove('open');
+                });
+            });
+
+            document.addEventListener('click', function() {
                 container.classList.remove('open');
             });
-        });
-
-        document.addEventListener('click', function() {
-            container.classList.remove('open');
-        });
+        }
     });
 </script>
 {% endblock content %}

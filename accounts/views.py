@@ -3,7 +3,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
-from .forms import RegistrazionePersonalizzataForm
+from .forms import RegistrazionePersonalizzataForm, ModificaProfiloForm
 
 # --- VISTA LOGIN PERSONALIZZATA (Smistamento Admin / Utenti) ---
 class CustomLoginView(LoginView):
@@ -35,7 +35,7 @@ def registrazione_view(request):
     else:
         form = RegistrazionePersonalizzataForm()
         
-    return render(request, 'accounts/registrazione.html', {'form': form})
+    return render(request, 'accounts/dati_profilo.html', {'form': form})
 
 
 # --- VISTA LOGOUT ---
@@ -53,3 +53,16 @@ def profilo_view(request):
     return render(request, 'accounts/profilo.html', {
         'profilo': request.user.profilo
     })
+
+# --- VISTA MODIFICA PROFILO ---
+@login_required
+def modifica_profilo(request):
+    if request.method == 'POST':
+        form = ModificaProfiloForm(request.POST, request.FILES, instance=request.user.profilo)
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:profilo')
+    else:
+        form = ModificaProfiloForm(instance=request.user.profilo)
+    
+    return render(request, 'accounts/dati_profilo.html', {'form': form})

@@ -295,3 +295,40 @@ a.btn-primary:active,
 button.btn-primary {
     color: var(--colore-bianco) !important;
 }
+
+
+/* --- PULSANTE ELIMINA FOTO PROFILO --- */
+.delete-photo-wrapper input[type="checkbox"] {
+    display: none; 
+}
+
+.delete-photo-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #d9534f;
+    background-color: #fdf2f2;
+    border: 1px solid #fce8e8;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 5px;
+}
+
+.delete-photo-label:hover {
+    background-color: #fce8e8;
+    border-color: #f5c6c6;
+}
+
+.delete-photo-wrapper input[type="checkbox"]:checked + .delete-photo-label {
+    background-color: #d9534f;
+    color: white;
+    border-color: #d9534f;
+}
+
+.delete-photo-wrapper input[type="checkbox"]:checked + .delete-photo-label svg {
+    fill: white;
+}

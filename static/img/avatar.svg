@@ -1,0 +1,18 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="avatarGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" stop-color="#e8801f"/>
+<stop offset="100%" stop-color="#b2520a"/>
+</linearGradient>
+<clipPath id="avatarClip">
+<circle cx="100" cy="100" r="100"/>
+</clipPath>
+</defs>
+
+<circle cx="100" cy="100" r="100" fill="url(#avatarGrad2)"/>
+
+<g clip-path="url(#avatarClip)" fill="#ffffff" opacity="0.95">
+<circle cx="100" cy="80" r="34"/>
+<path d="M100 128 C 50 128, 18 160, 18 210 L 182 210 C 182 160, 150 128, 100 128 Z"/>
+</g>
+</svg>

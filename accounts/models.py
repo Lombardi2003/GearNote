@@ -23,16 +23,10 @@ class Profilo(models.Model):
     def __str__(self):
         return f"Profilo di {self.user.username} ({self.ruolo})"
 
-# Questi segnali creano automaticamente un Profilo vuoto ogni volta che un nuovo User si registra
-# Il primo segnale rimane invariato
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profilo.objects.create(user=instance)
-
-# Aggiungiamo un controllo di sicurezza al secondo segnale
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    # Salva il profilo SOLO se l'utente ne possiede effettivamente uno
-    if hasattr(instance, 'profilo'):
-        instance.profilo.save()
+    @property
+    def foto_profilo_url(self):
+        if self.foto_profilo and hasattr(self.foto_profilo, 'url'):
+            return self.foto_profilo.url
+        else:
+            # Qui punta esattamente al file che hai appena salvato
+            return '/static/img/avatar.svg'

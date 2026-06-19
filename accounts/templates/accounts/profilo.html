@@ -3,23 +3,27 @@
 {% block title %}Area Personale - GearNote{% endblock %}
 
 {% block content %}
-<div class="auth-card" style="max-width: 600px;"> <h2>Il tuo Profilo</h2>
+<div class="auth-card" style="max-width: 600px;">
+    <h2>Il tuo Profilo</h2>
     
+    <div style="text-align: center; margin-bottom: 20px;">
+    <img src="{{ user.profilo.foto_profilo_url }}" 
+         alt="Foto profilo" 
+         style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 2px solid #ddd;">
+    </div>
     <div style="text-align: left; margin-bottom: 20px;">
         <p><strong>Username:</strong> {{ user.username }}</p>
         <p><strong>Nome:</strong> {{ user.first_name }}</p>
         <p><strong>Cognome:</strong> {{ user.last_name }}</p>
         <p><strong>Email:</strong> {{ user.email }}</p>
         
-        <p><strong>Età:</strong> 
-            {% if user.profilo.eta %}
-                {{ user.profilo.eta }} anni
-            {% else %}
-                Non specificata
-            {% endif %}
-        </p>
+        <hr>
+        
+        <p><strong>Età:</strong> {{ user.profilo.eta|default:"Non specificata" }} anni</p>
+        <p><strong>Città:</strong> {{ user.profilo.citta|default:"Non specificata" }}</p>
+        <p><strong>Ruolo:</strong> {{ user.profilo.get_ruolo_display }}</p>
     </div>
 
-    <a href="/" class="btn-primary" style="width: 100%;">Torna alla Home</a>
+    <a href="/" class="btn-primary" style="width: 100%; display: block; text-align: center;">Torna alla Home</a>
 </div>
 {% endblock content %}

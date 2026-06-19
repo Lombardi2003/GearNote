@@ -48,4 +48,8 @@ def logout_view(request):
 # --- VISTA PROFILO ---
 @login_required(login_url='accounts:login')
 def profilo_view(request):
-    return render(request, 'accounts/profilo.html')
+    # 'request.user.profilo' accede automaticamente all'oggetto Profilo 
+    # associato a quell'utente grazie al OneToOneField
+    return render(request, 'accounts/profilo.html', {
+        'profilo': request.user.profilo
+    })

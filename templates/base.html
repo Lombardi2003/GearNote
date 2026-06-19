@@ -4,21 +4,28 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}GearNote{% endblock %}</title>
+    
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    <link rel="icon" type="image/svg+xml" href="{% static 'img/icon.svg' %}">
 </head>
 <body>
 
     <header class="navbar">
         <div class="logo">
-            <a href="/">GearNote</a>
+            <a href="/">
+                <img src="{% static 'img/logo.svg' %}" alt="Logo GearNote">
+            </a>
         </div>
         <nav class="nav-links">
             {% if user.is_authenticated %}
                 <a href="{% url 'accounts:profilo' %}">Area Personale</a>
-                <form action="{% url 'accounts:logout' %}" method="post" style="display:inline;">
+                
+                <form action="{% url 'accounts:logout' %}" method="post" style="display: inline; margin-left: 30px;">
                     {% csrf_token %}
-                    <button type="submit" class="btn-logout">Esci</button>
+                    <button type="submit" class="btn-primary">Esci</button>
                 </form>
+                
             {% else %}
                 <a href="{% url 'accounts:login' %}">Accedi</a>
                 <a href="{% url 'accounts:registrati' %}" class="btn-primary">Registrati</a>

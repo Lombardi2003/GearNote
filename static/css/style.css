@@ -9,13 +9,16 @@
     --testo-secondario: #555555;
     --testo-chiaro: #666666;
     
+    /* Colori Brand (Arancione) */
     --arancione-base: #ff9800;
     --arancione-scuro: #e67e22;
     --ombra-arancione: rgba(255, 152, 0, 0.4);
     
+    /* Errori e Logout */
     --rosso-logout: #e74c3c;
     --rosso-logout-hover: #c0392b;
     
+    /* Struttura UI */
     --bordo-input: #dddddd;
     --ombra-leggera: 0 4px 12px rgba(0, 0, 0, 0.05);
     --ombra-scheda: 0 8px 24px rgba(0, 0, 0, 0.08);
@@ -28,12 +31,16 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: var(--colore-sfondo);
     color: var(--testo-base);
+    background-image: url('../img/background.svg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed; 
 }
 
 /* =========================================
-   2. LA NAVBAR (Total White & Minimal)
+   2. LA NAVBAR
    ========================================= */
 .navbar {
     background-color: var(--colore-bianco);
@@ -41,41 +48,17 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 50px;
+    /* 20px a sinistra sposta il logo più vicino al bordo dello schermo */
+    padding: 0 50px 0 20px; 
+    height: 90px;
+    box-sizing: border-box;
     position: sticky;
     top: 0;
+    z-index: 1000;
 }
 
 /* =========================================
-   3. IL LOGO
-   ========================================= */
-.logo a {
-    font-size: 26px;
-    font-weight: 800;
-    color: var(--testo-titoli);
-    text-decoration: none;
-    letter-spacing: -0.5px;
-}
-
-/* =========================================
-   4. I LINK DI NAVIGAZIONE
-   ========================================= */
-.nav-links a {
-    color: var(--testo-secondario);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 15px;
-    margin-left: 30px;
-    transition: color 0.2s ease-in-out;
-}
-
-/* Evitiamo che questa regola rompa l'animazione dei bottoni nella navbar */
-.nav-links a:not(.btn-primary):hover {
-    color: var(--arancione-scuro);
-}
-
-/* =========================================
-   5. CONTENITORE CENTRALE DELLA PAGINA
+   3. CONTENITORE CENTRALE DELLA PAGINA
    ========================================= */
 .container {
     max-width: 1000px;
@@ -84,16 +67,18 @@ body {
 }
 
 /* =========================================
-   6. MODULI DI AUTENTICAZIONE (Login & Registrazione)
+   4. MODULI DI AUTENTICAZIONE (Login & Registrazione)
    ========================================= */
 .auth-card {
     background: var(--colore-bianco);
-    max-width: 400px;
     margin: 60px auto;
     padding: 40px;
     border-radius: 12px;
     box-shadow: var(--ombra-scheda);
     text-align: center;
+    
+    /* AGGIUNGI QUESTA RIGA: Tiene stretta e compatta la bolla del Login */
+    max-width: 450px; 
 }
 
 .auth-card h2 {
@@ -108,51 +93,109 @@ body {
     margin-bottom: 15px;
 }
 
-.auth-card label {
-    display: block;
-    font-weight: 600;
-    font-size: 14px;
-    margin-bottom: 5px;
-    color: var(--testo-secondario);
-}
-
-/* Regole per i campi in cui si digita (Aggiunto type="number" per l'Età) */
+/* Base unificata per tutti i campi di input e select */
 .auth-card input[type="text"],
 .auth-card input[type="password"],
 .auth-card input[type="email"],
-.auth-card input[type="number"] {
+.auth-card input[type="number"],
+.auth-card select {
     width: 100%;
     padding: 12px;
     border: 1px solid var(--bordo-input);
     border-radius: 6px;
     box-sizing: border-box;
     font-size: 15px;
-    transition: border-color 0.3s;
+    background-color: var(--colore-bianco);
+    color: var(--testo-base);
     font-family: inherit;
+    transition: all 0.25s ease-in-out; /* Transizione fluida globale per bordi e ombre */
 }
 
-/* Effetto quando si clicca dentro un campo */
+/* Hover leggero quando l'utente passa sopra i campi senza cliccarli */
+.auth-card input[type="text"]:hover,
+.auth-card input[type="password"]:hover,
+.auth-card input[type="email"]:hover,
+.auth-card input[type="number"]:hover,
+.auth-card select:hover {
+    border-color: #b0b0b0;
+}
+
+/* COERENZA TOTALE SUL FOCUS: Ora TUTTI i campi si illuminano di arancione al click */
 .auth-card input[type="text"]:focus,
 .auth-card input[type="password"]:focus,
 .auth-card input[type="email"]:focus,
-.auth-card input[type="number"]:focus {
+.auth-card input[type="number"]:focus,
+.auth-card select:focus {
     border-color: var(--arancione-base);
+    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.18); /* Delicato alone luminoso del brand */
+    background-color: var(--colore-bianco);
     outline: none;
 }
 
-/* Regola specifica per la spaziatura del bottone nel form */
+/* Colore arancione per l'accento nativo dei controlli di form supportati dal browser
+   (checkbox, radio; non ha effetto sull'highlight delle option del select) */
+.auth-card select {
+    accent-color: var(--arancione-base);
+}
+
+/* --- AREA CARICAMENTO FOTO (Stile Premium coordinato) --- */
+.auth-card input[type="file"] {
+    width: 100%;
+    padding: 11px; /* Allineato all'altezza degli altri campi */
+    background-color: #fcfcfc;
+    border: 1px dashed var(--arancione-base); /* Bordo tratteggiato arancione */
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: var(--testo-secondario);
+    cursor: pointer;
+    transition: all 0.25s ease-in-out;
+}
+
+.auth-card input[type="file"]:hover {
+    border-color: var(--arancione-scuro);
+    background-color: #fff8f0; /* Evidenziazione cromatica morbida al passaggio del mouse */
+}
+
+/* Se l'utente clicca sull'area file, segue la stessa animazione degli altri input */
+.auth-card input[type="file"]:focus {
+    box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.18);
+    outline: none;
+}
+
+/* Colora il pulsante "Scegli file" generato dal browser (solo Chrome/Edge/Safari su WebKit/Blink) */
+.auth-card input[type="file"]::file-selector-button {
+    margin-right: 12px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--arancione-base);
+    color: #fff;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.auth-card input[type="file"]::file-selector-button:hover {
+    background-color: var(--arancione-scuro);
+}
+
+/* --- BOTTONE DI INVIO FORM --- */
 .auth-card .btn-submit {
     width: 100%;
     margin-top: 15px;
-    padding: 12px 20px !important; /* Lo fa leggermente più alto nel form */
+    padding: 12px 20px !important;
 }
 
+/* --- LINK SOTTO IL FORM (Hai già un account?) --- */
 .auth-card .auth-link {
     display: block;
     margin-top: 20px;
     font-size: 14px;
     color: var(--testo-chiaro);
     text-decoration: none;
+    transition: color 0.2s ease;
 }
 
 .auth-card .auth-link:hover {
@@ -160,10 +203,65 @@ body {
     text-decoration: underline;
 }
 
+/* --- LINEA SEPARATRICE (HR) ARANCIONE A TUTTO BLOCCO --- */
+.auth-card hr {
+    border: 0;
+    height: 1px;
+    background: var(--arancione-base);
+    margin: 32px 0; /* Spaziatura leggermente aumentata per dare più respiro */
+    width: 100%;
+}
 /* =========================================
-   7. COMPONENTI GLOBALI (Tutti i bottoni unificati)
+   5. COMPONENTI GLOBALI (Bottoni & Loghi)
    ========================================= */
-/* Classe universale per bottoni principali (Link <a> o Tasti <button>) */
+
+/* --- A. IL LOGO --- */
+.logo {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0;
+}
+
+.logo a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    height: 100%;
+}
+
+.logo img {
+    height: 115px; 
+    width: auto;   
+    display: block;
+    margin-top: 20px; 
+    transition: transform 0.2s ease-in-out;
+}
+
+.logo img:active {
+    transform: scale(0.95);
+}
+
+/* --- B. I LINK DI NAVIGAZIONE --- */
+.nav-links {
+    display: flex;
+    align-items: center;
+}
+
+.nav-links a {
+    color: var(--testo-secondario);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    margin-left: 30px;
+    transition: color 0.2s ease-in-out;
+}
+
+.nav-links a:hover {
+    color: var(--arancione-scuro);
+}
+
+/* --- C. BOTTONE ARANCIONE UNIFICATO --- */
 .btn-primary {
     background-color: var(--arancione-base) !important;
     color: var(--colore-bianco) !important;
@@ -172,35 +270,28 @@ body {
     border-radius: 6px;
     font-size: 15px;
     font-weight: bold;
-    font-family: inherit; /* Forza il bottone a usare il font del sito */
+    font-family: inherit;
     cursor: pointer;
     text-align: center;
     text-decoration: none !important;
     display: inline-block;
     box-sizing: border-box;
-    transition: all 0.3s ease !important; /* Forza la stessa fluidità su tutti */
+    transition: all 0.3s ease !important;
 }
 
 .btn-primary:hover {
     background-color: var(--arancione-scuro) !important;
     color: var(--colore-bianco) !important;
-    transform: translateY(-2px) !important; /* Movimento verticale */
-    box-shadow: 0 4px 8px var(--ombra-arancione) !important; /* Ombra */
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 8px var(--ombra-arancione) !important;
 }
 
-/* Tasto Esci (Logout) mimetizzato nel menu */
-.btn-logout {
-    background: none;
-    border: none;
-    color: var(--rosso-logout);
-    font-weight: 600;
-    font-size: 15px;
-    margin-left: 30px;
-    cursor: pointer;
-    font-family: inherit;
-    transition: color 0.2s ease-in-out;
-}
-
-.btn-logout:hover {
-    color: var(--rosso-logout-hover);
+/* Forza lo stato del testo bianco sui bottoni ed esclude i link normali */
+a.btn-primary,
+a.btn-primary:link,
+a.btn-primary:visited,
+a.btn-primary:hover,
+a.btn-primary:active,
+button.btn-primary {
+    color: var(--colore-bianco) !important;
 }

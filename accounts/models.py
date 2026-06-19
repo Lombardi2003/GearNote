@@ -4,19 +4,24 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 class Profilo(models.Model):
-    RUOLI_CHOICES = [
-        ('ACQUIRENTE', 'Utente Registrato - Acquirente'),
-        ('VENDITORE', 'Utente Registrato - Venditore'),
-    ]
-    
-    # Collega il profilo direttamente all'utente base di Django
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profilo')
-    eta = models.PositiveIntegerField(null=True, blank=True)
+    # Creiamo le scelte disponibili (Il primo valore va nel DB, il secondo lo legge l'utente)
+    RUOLI_SCELTA = (
+        ('acquirente', 'Acquirente'),
+        ('venditore', 'Venditore'),
+    )
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    eta = models.IntegerField(null=True, blank=True)
     citta = models.CharField(max_length=100, null=True, blank=True)
-    ruolo = models.CharField(max_length=20, choices=RUOLI_CHOICES, default='ACQUIRENTE')
+    
+    # Aggiungiamo il campo ruolo. Impostiamo Acquirente come default per sicurezza.
+    ruolo = models.CharField(max_length=20, choices=RUOLI_SCELTA, default='acquirente')
+
+    # Foto del profilo (opzionale)
+    foto_profilo = models.ImageField(upload_to='foto_profilo/', null=True, blank=True)
 
     def __str__(self):
-        return f"Profilo di {self.user.username} ({self.get_ruolo_display()})"
+        return f"Profilo di {self.user.username} ({self.ruolo})"
 
 # Questi segnali creano automaticamente un Profilo vuoto ogni volta che un nuovo User si registra
 # Il primo segnale rimane invariato

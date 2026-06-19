@@ -4,16 +4,30 @@ from django.contrib.auth.models import User
 from .models import Profilo
 
 class RegistrazionePersonalizzataForm(UserCreationForm):
+    RUOLI_SCELTA = (
+        ('acquirente', 'Acquirente'),
+        ('venditore', 'Venditore'),
+    )
+
+    # Sostituisci il blocco del ruolo con questo:
+    ruolo = forms.ChoiceField(
+        choices=RUOLI_SCELTA, 
+        label="Tipo di Account", # <-- LA FRASE SI CAMBIA QUI
+        widget=forms.Select() # Tolti gli stili forzati
+    )
+    
+    # E aggiorna anche la foto profilo per avere un'etichetta più pulita:
+    foto_profilo = forms.ImageField(label="Foto Profilo (Opzionale)", required=False)
+    
     nome = forms.CharField(max_length=30, required=True)
     cognome = forms.CharField(max_length=30, required=True)
     eta = forms.IntegerField(label="Età", min_value=0, required=True)
     citta = forms.CharField(label="Città", max_length=100, required=True)
     email = forms.EmailField(required=True)
-
+    
     class Meta:
         model = User
-        # Le due password vengono aggiunte da Django automaticamente in fondo a questa lista
-        fields = ['nome', 'cognome', 'eta', 'citta', 'username', 'email'] 
+        fields = ['ruolo', 'nome', 'cognome', 'eta', 'citta', 'username', 'email'] 
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -23,10 +37,14 @@ class RegistrazionePersonalizzataForm(UserCreationForm):
         
         if commit:
             user.save()
-            # Salviamo anche la città nel profilo
+            # Recuperiamo l'immagine dal form compilato
+            immagine = self.cleaned_data.get('foto_profilo')
+            
             Profilo.objects.create(
                 user=user, 
                 eta=self.cleaned_data['eta'],
-                citta=self.cleaned_data['citta']
+                citta=self.cleaned_data['citta'],
+                ruolo=self.cleaned_data['ruolo'],
+                foto_profilo=immagine # Salviamo l'immagine nel profilo
             )
         return user

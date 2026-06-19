@@ -20,12 +20,14 @@ class CustomLoginView(LoginView):
 
 
 # --- VISTA REGISTRAZIONE ---
+# Cerca questa funzione dentro accounts/views.py e aggiorna solo questa riga:
 def registrazione_view(request):
     if request.user.is_authenticated:
         return redirect('accounts:profilo')
 
     if request.method == 'POST':
-        form = RegistrazionePersonalizzataForm(request.POST)
+        # REGOLA D'ORO: Aggiungi request.FILES come secondo argomento!
+        form = RegistrazionePersonalizzataForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
             login(request, user)

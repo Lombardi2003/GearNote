@@ -332,3 +332,32 @@ button.btn-primary {
 .delete-photo-wrapper input[type="checkbox"]:checked + .delete-photo-label svg {
     fill: white;
 }
+
+/* =========================================
+   SCROLLBAR PERSONALIZZATA (tema GearNote)
+   ========================================= */
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f4f1ec;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--arancione-scuro);
+    border-radius: 8px;
+    border: 2px solid #f4f1ec;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #8a3e08;
+}
+
+/* Firefox */
+html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--arancione-scuro) #f4f1ec;
+}

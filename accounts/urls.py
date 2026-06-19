@@ -16,4 +16,10 @@ urlpatterns = [
     path('profilo/', views.profilo_view, name='profilo'),
 
     path('modifica/', views.modifica_profilo, name='modifica_profilo'),
+
+    # Rotta per il cambio password
+    path('password-change/', auth_views.PasswordChangeView.as_view(
+        template_name='accounts/cambia_password.html',
+        success_url='/accounts/profilo/' # Ridirige al profilo una volta completato con successo
+    ), name='password_change'),
 ]

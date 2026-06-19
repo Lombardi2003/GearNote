@@ -1,0 +1,16 @@
+<svg width="100%" height="100" viewBox="9 24 104 104" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="eqGrad3" x1="0%" y1="0%" x2="0%" y2="100%">
+<stop offset="0%" stop-color="#e8801f"/>
+<stop offset="100%" stop-color="#b2520a"/>
+</linearGradient>
+</defs>
+
+<g transform="translate(20,128)">
+<rect x="0" y="-32" width="11" height="32" rx="5.5" fill="url(#eqGrad3)"/>
+<rect x="18" y="-72" width="11" height="72" rx="5.5" fill="url(#eqGrad3)"/>
+<rect x="36" y="-104" width="11" height="104" rx="5.5" fill="url(#eqGrad3)"/>
+<rect x="54" y="-72" width="11" height="72" rx="5.5" fill="url(#eqGrad3)"/>
+<rect x="72" y="-32" width="11" height="32" rx="5.5" fill="url(#eqGrad3)"/>
+</g>
+</svg>

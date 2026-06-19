@@ -1,0 +1,21 @@
+<svg width="680" height="180" viewBox="0 0 680 180" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="eqGrad3" x1="0%" y1="0%" x2="0%" y2="100%">
+<stop offset="0%" stop-color="#e8801f"/>
+<stop offset="100%" stop-color="#b2520a"/>
+</linearGradient>
+</defs>
+
+<g transform="translate(40,128)">
+<rect x="0" y="-32" width="11" height="32" rx="5.5" fill="url(#eqGrad3)"/>
+<rect x="18" y="-72" width="11" height="72" rx="5.5" fill="url(#eqGrad3)"/>
+<rect x="36" y="-104" width="11" height="104" rx="5.5" fill="url(#eqGrad3)"/>
+<rect x="54" y="-72" width="11" height="72" rx="5.5" fill="url(#eqGrad3)"/>
+<rect x="72" y="-32" width="11" height="32" rx="5.5" fill="url(#eqGrad3)"/>
+</g>
+
+<line x1="148" y1="38" x2="148" y2="142" stroke="#e0e0e0" stroke-width="1.5"/>
+
+<text x="178" y="78" font-size="46" font-weight="500" fill="#1f1f1f" font-family="Arial, sans-serif">Gear<tspan fill="#cc5f0c">Note</tspan></text>
+<text x="179" y="108" font-size="14" fill="#8a8a8a" font-family="Arial, sans-serif" letter-spacing="3">STRUMENTI &amp; PARTITURE MUSICALI</text>
+</svg>

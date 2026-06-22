@@ -115,9 +115,18 @@
 
         </div> 
         
-        <button type="submit" class="btn-primary btn-submit" style="margin-top: 20px;">
-            {% if user.is_authenticated %}Salva Modifiche{% else %}Registrati{% endif %}
-        </button>
+        <div style="display: flex; gap: 15px; margin-top: 20px;">
+            <button type="submit" class="btn-primary btn-submit" style="flex: 1; margin-top: 0;">
+                {% if user.is_authenticated %}Salva Modifiche{% else %}Registrati{% endif %}
+            </button>
+            
+            <a href="{% if user.is_authenticated %}{% url 'accounts:profilo' %}{% else %}/{% endif %}" 
+               style="flex: 1; padding: 12px 20px; text-align: center; font-size: 15px; font-weight: bold; background-color: #f5f5f5; color: var(--testo-secondario); border: 1px solid var(--bordo-input); border-radius: 6px; text-decoration: none; transition: all 0.3s ease; display: inline-flex; justify-content: center; align-items: center;"
+               onmouseover="this.style.backgroundColor='#eeeeee'" onmouseout="this.style.backgroundColor='#f5f5f5'">
+                Annulla
+            </a>
+        </div>
+
     </form>
     
     {% if not user.is_authenticated %}

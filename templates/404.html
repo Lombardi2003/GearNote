@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}404 - Pagina Non Trovata | GearNote{% endblock %}
+
+{% block content %}
+<div style="
+    text-align: center; 
+    padding: 10vh 20px; 
+    min-height: 60vh; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center;
+">
+    <h1 style="font-size: 120px; font-weight: 900; color: #ef6c00; margin: 0; line-height: 1; text-shadow: 4px 4px 0px #ffe0b2;">
+        404
+    </h1>
+    <h2 style="font-size: 32px; color: #333; margin: 20px 0 10px 0;">
+        Ops! Nota stonata... 🎷
+    </h2>
+    <p style="font-size: 16px; color: #666; max-width: 500px; margin-bottom: 40px; line-height: 1.5;">
+        Sembra che tu sia uscito fuori tempo. La pagina che stai cercando non esiste, è stata spostata o l'indirizzo non è corretto.
+    </p>
+    
+    <a href="/" style="
+        background-color: #ef6c00; 
+        color: white; 
+        padding: 14px 35px; 
+        border-radius: 50px; 
+        text-decoration: none; 
+        font-weight: 700; 
+        font-size: 16px;
+        box-shadow: 0 4px 15px rgba(239, 108, 0, 0.3); 
+        transition: transform 0.2s ease, background-color 0.2s ease;
+    " onmouseover="this.style.transform='scale(1.05)'; this.style.backgroundColor='#e65c00';" onmouseout="this.style.transform='scale(1)'; this.style.backgroundColor='#ef6c00';">
+        Torna alla Home
+    </a>
+</div>
+{% endblock content %}

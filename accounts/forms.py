@@ -1,19 +1,59 @@
+import re
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User, Group
 from .models import Profilo
+from django.conf import settings
+import os
 
-# --- FORM DI REGISTRAZIONE (Intatto) ---
-class RegistrazionePersonalizzataForm(UserCreationForm):
-    nome = forms.CharField(max_length=50, label="Nome")
-    cognome = forms.CharField(max_length=50, label="Cognome")
-    email = forms.EmailField(label="Email")
-    eta = forms.IntegerField(label="Età")
-    citta = forms.CharField(max_length=100, label="Città")
+# ==========================================================
+# 1. IL MIXIN GLOBALE DI VALIDAZIONE (Scritto una volta sola)
+# ==========================================================
+class ValidazioneProfiloMixin:
+    """
+    Raccoglie tutte le regole di validazione comuni sia alla 
+    registrazione che alla modifica del profilo.
+    """
+    def clean_eta(self):
+        eta = self.cleaned_data.get('eta')
+        if eta is not None:
+            if eta < 18:
+                raise forms.ValidationError("Devi avere almeno 18 anni per usare GearNote.")
+            if eta > 100:
+                raise forms.ValidationError("Inserisci un'età valida (massimo 100 anni).")
+        return eta
+
+    def clean_nome(self):
+        nome = self.cleaned_data.get('nome')
+        if nome and not re.match(r"^[A-Za-zÀ-ÿ\s\']+$", nome):
+            raise forms.ValidationError("Il nome può contenere solo lettere, spazi o apostrofi.")
+        return nome
+
+    def clean_cognome(self):
+        cognome = self.cleaned_data.get('cognome')
+        if cognome and not re.match(r"^[A-Za-zÀ-ÿ\s\']+$", cognome):
+            raise forms.ValidationError("Il cognome contiene caratteri non validi.")
+        return cognome
+        
+    def clean_citta(self):
+        citta = self.cleaned_data.get('citta')
+        if citta and len(citta) < 2:
+            raise forms.ValidationError("Il nome della città è troppo corto.")
+        return citta
+
+
+# ==========================================================
+# 2. FORM DI REGISTRAZIONE (Eredita dal Mixin)
+# ==========================================================
+class RegistrazionePersonalizzataForm(ValidazioneProfiloMixin, UserCreationForm):
+    nome = forms.CharField(max_length=50, label="Nome", widget=forms.TextInput(attrs={'placeholder': 'Es. Mario'}))
+    cognome = forms.CharField(max_length=50, label="Cognome", widget=forms.TextInput(attrs={'placeholder': 'Es. Rossi'}))
+    email = forms.EmailField(label="Email", widget=forms.EmailInput(attrs={'placeholder': 'mario.rossi@email.com'}))
+    eta = forms.IntegerField(label="Età", widget=forms.NumberInput(attrs={'min': '18', 'max': '100', 'placeholder': 'Es. 22'}))
+    citta = forms.CharField(max_length=100, label="Città", widget=forms.TextInput(attrs={'placeholder': 'Es. Roma'}))
     
     RUOLI = [('acquirente', 'Acquirente'), ('venditore', 'Venditore')]
     ruolo = forms.ChoiceField(choices=RUOLI, label="Tipo di Account")
-    
     foto_profilo = forms.ImageField(required=False, label="Foto Profilo")
 
     class Meta:
@@ -29,7 +69,6 @@ class RegistrazionePersonalizzataForm(UserCreationForm):
         if commit:
             user.save()
             
-            # Creazione Profilo
             ruolo_scelto = self.cleaned_data['ruolo']
             Profilo.objects.create(
                 user=user, 
@@ -39,7 +78,6 @@ class RegistrazionePersonalizzataForm(UserCreationForm):
                 foto_profilo=self.cleaned_data.get('foto_profilo')
             )
 
-            # Assegnazione Gruppo
             nome_gruppo = ruolo_scelto.capitalize() 
             gruppo, _ = Group.objects.get_or_create(name=nome_gruppo)
             user.groups.add(gruppo)
@@ -47,12 +85,13 @@ class RegistrazionePersonalizzataForm(UserCreationForm):
         return user
 
 
-# --- FORM DI MODIFICA (Ottimizzato per il tuo HTML) ---
-class ModificaProfiloForm(forms.ModelForm):
-    # 1. SBLOCCATO L'USERNAME (rimosso disabled=True)
+# ==========================================================
+# 3. FORM DI MODIFICA (Eredita dal Mixin)
+# ==========================================================
+class ModificaProfiloForm(ValidazioneProfiloMixin, forms.ModelForm):
     username = forms.CharField(label="Username", required=True)
-    nome = forms.CharField(max_length=50, label="Nome", required=True)
-    cognome = forms.CharField(max_length=50, label="Cognome", required=True)
+    nome = forms.CharField(max_length=50, label="Nome", required=True, widget=forms.TextInput(attrs={'placeholder': 'Es. Mario'}))
+    cognome = forms.CharField(max_length=50, label="Cognome", required=True, widget=forms.TextInput(attrs={'placeholder': 'Es. Rossi'}))
     email = forms.EmailField(label="Email", required=True)
     
     foto_profilo = forms.ImageField(
@@ -64,8 +103,11 @@ class ModificaProfiloForm(forms.ModelForm):
     class Meta:
         model = Profilo
         fields = ['ruolo', 'eta', 'citta', 'foto_profilo']
+        widgets = {
+            'eta': forms.NumberInput(attrs={'min': '18', 'max': '100'}),
+            'citta': forms.TextInput(attrs={'placeholder': 'Es. Roma'})
+        }
 
-    # Abbiamo aggiunto 'elimina_foto' alla fine della lista
     field_order = ['username', 'ruolo', 'nome', 'cognome', 'email', 'eta', 'citta', 'foto_profilo', 'elimina_foto']
 
     def __init__(self, *args, **kwargs):
@@ -78,19 +120,17 @@ class ModificaProfiloForm(forms.ModelForm):
         self.fields['email'].initial = user.email
         self.fields['ruolo'].disabled = True
 
-        # 2. SE L'UTENTE HA UNA FOTO, CREIAMO IL PULSANTINO "ELIMINA"
         if self.instance and self.instance.foto_profilo:
             self.fields['elimina_foto'] = forms.BooleanField(
                 required=False, 
                 label="Rimuovi foto attuale"
             )
 
-    # 3. CONTROLLO USERNAME DOPPIO
     def clean_username(self):
+        """Questa rimane qui perché è specifica solo della modifica"""
         nuovo_username = self.cleaned_data.get('username')
         user_corrente = self.instance.user
         
-        # Se ha cambiato username, controlliamo se il nuovo esiste già
         if nuovo_username and nuovo_username != user_corrente.username:
             if User.objects.filter(username=nuovo_username).exists():
                 raise forms.ValidationError("Questo username è già in uso. Scegline un altro.")
@@ -100,19 +140,38 @@ class ModificaProfiloForm(forms.ModelForm):
         profilo = super().save(commit=False)
         user = profilo.user
         
-        # Salviamo il nuovo username
+        # Vecchio username per controllo
+        vecchio_username = user.username
+        
+        # Aggiornamento dati user
         user.username = self.cleaned_data['username']
         user.first_name = self.cleaned_data['nome']
         user.last_name = self.cleaned_data['cognome']
         user.email = self.cleaned_data['email']
+        user.save() # Salviamo subito l'user per avere il nuovo username
 
-        # 4. GESTIONE ELIMINAZIONE FOTO
+        # --- GESTIONE RINOMINAZIONE FOTO ---
+        if vecchio_username != user.username and profilo.foto_profilo:
+            # Recuperiamo il percorso vecchio e quello nuovo
+            estensione = os.path.splitext(profilo.foto_profilo.name)[1]
+            nuovo_nome_file = f"foto_profilo/{user.username}{estensione}"
+            
+            # Percorsi assoluti (su disco)
+            vecchio_path = profilo.foto_profilo.path
+            nuovo_path = os.path.join(settings.MEDIA_ROOT, nuovo_nome_file)
+            
+            # Rinominiamo il file fisico sul disco
+            os.rename(vecchio_path, nuovo_path)
+            
+            # Aggiorniamo il database con il nuovo percorso
+            profilo.foto_profilo.name = nuovo_nome_file
+
+        # Gestione eliminazione (come avevi già)
         if self.cleaned_data.get('elimina_foto'):
-            profilo.foto_profilo.delete(save=False) # Cancella il file fisico
-            profilo.foto_profilo = None             # Svuota il database
+            profilo.foto_profilo.delete(save=False)
+            profilo.foto_profilo = None            
         
         if commit:
-            user.save()
             profilo.save()
             
         return profilo

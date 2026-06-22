@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Area Personale - GearNote{% endblock %}
 
@@ -32,13 +33,9 @@
             {% if user.profilo.foto_profilo %}
                 <img src="{{ user.profilo.foto_profilo.url }}" alt="Foto Profilo" style="width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 3px solid #ef6c00;">
             {% else %}
-                <div style="width: 85px; height: 85px; border-radius: 50%; background: #e0e0e0; display: flex; align-items: center; justify-content: center;">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="40" height="40" fill="#9e9e9e">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                    </svg>
-                </div>
+                <img src="{% static 'img/avatar.svg' %}" alt="Avatar Default" style="width: 85px; height: 85px; border-radius: 50%; background: #e0e0e0; object-fit: cover; border: 3px solid #ef6c00;">
             {% endif %}
-            
+                    
             <div style="display: flex; flex-direction: column;">
                 <h3 style="margin: 0; font-size: 24px; font-weight: 800; color: #333; line-height: 1.2;">
                     {{ user.first_name }} {{ user.last_name }}

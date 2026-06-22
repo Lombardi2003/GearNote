@@ -1,10 +1,17 @@
+import os
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+
+# --- FUNZIONE PER RINOMINARE IL FILE ---
+def path_foto_profilo(instance, filename):
+    # Otteniamo l'estensione del file originale (es: .jpg, .png)
+    ext = filename.split('.')[-1]
+    # Creiamo il nuovo nome basato sullo username dell'utente
+    nome_file = f"{instance.user.username}.{ext}"
+    # Il file verrà salvato in 'media/foto_profilo/username.jpg'
+    return os.path.join('foto_profilo', nome_file)
 
 class Profilo(models.Model):
-    # Creiamo le scelte disponibili (Il primo valore va nel DB, il secondo lo legge l'utente)
     RUOLI_SCELTA = (
         ('acquirente', 'Acquirente'),
         ('venditore', 'Venditore'),
@@ -13,12 +20,10 @@ class Profilo(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     eta = models.IntegerField(null=True, blank=True)
     citta = models.CharField(max_length=100, null=True, blank=True)
-    
-    # Aggiungiamo il campo ruolo. Impostiamo Acquirente come default per sicurezza.
     ruolo = models.CharField(max_length=20, choices=RUOLI_SCELTA, default='acquirente')
 
-    # Foto del profilo (opzionale)
-    foto_profilo = models.ImageField(upload_to='foto_profilo/', null=True, blank=True)
+    # --- MODIFICA QUI: usiamo la funzione appena creata ---
+    foto_profilo = models.ImageField(upload_to=path_foto_profilo, null=True, blank=True)
 
     def __str__(self):
         return f"Profilo di {self.user.username} ({self.ruolo})"
@@ -27,6 +32,4 @@ class Profilo(models.Model):
     def foto_profilo_url(self):
         if self.foto_profilo and hasattr(self.foto_profilo, 'url'):
             return self.foto_profilo.url
-        else:
-            # Qui punta esattamente al file che hai appena salvato
-            return '/static/img/avatar.svg'
+        return '/static/img/avatar.svg'

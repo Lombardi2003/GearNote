@@ -66,3 +66,20 @@ def modifica_profilo(request):
         form = ModificaProfiloForm(instance=request.user.profilo)
     
     return render(request, 'accounts/dati_profilo.html', {'form': form})
+
+@login_required
+def disattiva_account(request):
+    if request.method == 'POST':
+        user = request.user
+        # Il "Soft Delete": l'utente esiste ancora nel DB ma è disattivato
+        user.is_active = False 
+        user.save()
+        
+        # Facciamo il logout automatico
+        logout(request)
+        
+        # Rimandiamo alla pagina principale
+        return redirect('/') 
+    
+    # Se qualcuno prova ad accedere tramite URL diretto (GET), lo rimandiamo al profilo
+    return redirect('accounts:profilo')

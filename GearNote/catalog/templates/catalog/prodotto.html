@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ prodotto.titolo }} - GearNote{% endblock %}
+
+{% block content %}
+<div class="layout-catalogo" style="padding: 20px;">
+    
+    <div class="bolla-vetrina" style="display: flex; gap: 40px; padding: 40px; border-radius: 40px; background: white;">
+        
+        <div style="flex: 1.2; display: flex; flex-direction: column; gap: 15px;">
+            <div style="width: 100%; height: 500px; background: #fafafa; border-radius: 25px; overflow: hidden; border: 1px solid #f0f0f0;">
+                {% if prodotto.immagini.all %}
+                    <img src="{{ prodotto.immagini.first.immagine.url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #ccc;">Nessuna immagine</div>
+                {% endif %}
+            </div>
+            
+            <div style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 5px;">
+                {% for img in prodotto.immagini.all %}
+                    <div style="width: 100px; height: 100px; border-radius: 15px; overflow: hidden; border: 2px solid #fde4d0; flex-shrink: 0;">
+                        <img src="{{ img.immagine.url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div style="flex: 0.8; display: flex; flex-direction: column;">
+            <h1 style="font-size: 44px; color: #333; margin: 0 0 10px 0; font-weight: 900;">{{ prodotto.titolo }}</h1>
+            <div style="font-size: 36px; font-weight: 900; color: #ef6c00; margin-bottom: 25px;">{{ prodotto.prezzo }} €</div>
+            
+            <div style="background: #fff8f3; padding: 25px; border-radius: 20px; margin-bottom: 25px;">
+                <h4 style="margin: 0 0 10px 0; color: #d35400;">Descrizione</h4>
+                <p style="color: #555; line-height: 1.7; font-size: 16px; margin: 0;">{{ prodotto.descrizione }}</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px;">
+                <div style="background: #f9f9f9; padding: 15px; border-radius: 15px;">
+                    <span style="display: block; font-size: 12px; color: #888;">Condizione</span>
+                    <strong style="color: #333;">{{ prodotto.get_condizione_display }}</strong>
+                </div>
+                <div style="background: #f9f9f9; padding: 15px; border-radius: 15px;">
+                    <span style="display: block; font-size: 12px; color: #888;">Venditore</span>
+                    <strong style="color: #333;">@{{ prodotto.venditore.username }}</strong>
+                </div>
+            </div>
+
+            <button style="padding: 20px; background: #ef6c00; color: white; border: none; border-radius: 15px; font-weight: 800; font-size: 18px; cursor: pointer; transition: 0.2s;"
+                    onmouseover="this.style.backgroundColor='#e65c00'" onmouseout="this.style.backgroundColor='#ef6c00'">
+                Invia Messaggio al Venditore
+            </button>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

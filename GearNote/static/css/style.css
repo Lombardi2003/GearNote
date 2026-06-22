@@ -231,10 +231,10 @@ body {
 }
 
 .logo img {
-    height: 115px; 
+    height: 110px; 
     width: auto;   
     display: block;
-    margin-top: 20px; 
+    margin-top: 0px; 
     transition: transform 0.2s ease-in-out;
 }
 

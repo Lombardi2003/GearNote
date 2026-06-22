@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Catalogo Strumenti - GearNote{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'catalog/css/catalogo.css' %}">
+
+<div class="layout-catalogo">
+
+    <div class="bolla-filtri">
+        <h3 class="filtri-titolo">🎛️ Filtra Strumenti</h3>
+
+        <form action="" method="GET" style="display: flex; flex-direction: column; gap: 15px;">
+            
+            <div>
+                <label class="filtro-label">Ricerca</label>
+                <input type="text" name="q" placeholder="Es. Fender Stratocaster..." class="filtro-input">
+            </div>
+
+            <div class="separatore"></div>
+
+            <div>
+                <label class="filtro-label">Categoria</label>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <label style="font-size: 15px; color: #555; font-weight: 600; cursor: pointer;">
+                        <input type="checkbox" style="accent-color: #ef6c00;"> Tutte
+                    </label>
+                    <label style="font-size: 15px; color: #555; font-weight: 600; cursor: pointer;">
+                        <input type="checkbox" style="accent-color: #ef6c00;"> Chitarre & Bassi
+                    </label>
+                </div>
+            </div>
+
+            <div class="separatore"></div>
+
+            <div>
+                <label class="filtro-label">Prezzo (€)</label>
+                <div style="display: flex; gap: 15px;">
+                    <input type="number" name="min_prezzo" placeholder="Min" class="filtro-input" style="padding: 12px;">
+                    <input type="number" name="max_prezzo" placeholder="Max" class="filtro-input" style="padding: 12px;">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-applica">Applica Filtri</button>
+        </form>
+    </div>
+
+    <div class="bolla-vetrina">
+        
+        <div style="margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #fff0e6; display: flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+                <h1 style="color: #333; font-weight: 800; font-size: 36px; margin: 0;">Il Catalogo</h1>
+                <p style="color: #888; font-weight: 500; margin: 8px 0 0 0; font-size: 16px;">
+                    Esplora {{ prodotti|length }} prodotti in vendita.
+                </p>
+            </div>
+        </div>
+
+        <div class="griglia-prodotti">
+            {% for prodotto in prodotti %}
+                <a href="{% url 'catalog:dettaglio' prodotto.id %}" class="card-link">
+                    <div class="prodotto-card">
+                        
+                        <div class="img-container">
+                            {% if prodotto.immagini.first %}
+                                <img src="{{ prodotto.immagini.first.immagine.url }}" alt="{{ prodotto.titolo }}">
+                            {% else %}
+                                <span class="no-foto">No Foto</span>
+                            {% endif %}
+                        </div>
+
+                        <h3 class="prodotto-titolo">{{ prodotto.titolo }}</h3>
+                        
+                        <div class="prodotto-prezzo">{{ prodotto.prezzo }} €</div>
+                        
+                        <div class="prodotto-footer">
+                            <span class="badge-condizione">{{ prodotto.get_condizione_display }}</span>
+                            <span style="font-size: 13px; color: #999; font-weight: 700;">@{{ prodotto.venditore.username }}</span>
+                        </div>
+                    </div>
+                </a>
+            {% empty %}
+                <div class="palco-vuoto">
+                    <span style="font-size: 60px; display: block; margin-bottom: 20px;">🎷</span>
+                    <h3 style="color: #ef6c00; font-size: 28px; font-weight: 800; margin: 0 0 15px 0;">Il palco è vuoto!</h3>
+                    <p style="color: #888; font-size: 18px; font-weight: 500; margin: 0;">Non ci sono strumenti in vendita al momento.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

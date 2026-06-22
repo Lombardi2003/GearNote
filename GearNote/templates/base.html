@@ -11,23 +11,58 @@
 </head>
 <body>
 
-    <header class="navbar">
-        <div class="logo">
-            <a href="/">
-                <img src="{% static 'img/logo.svg' %}" alt="Logo GearNote">
+    <header class="navbar" style="display: flex; justify-content: space-between; align-items: center;">
+        
+        <div style="display: flex; align-items: center; gap: 40px;">
+            <div class="logo">
+                <a href="/">
+                    <img src="{% static 'img/logo.svg' %}" alt="Logo GearNote" style="display: block;">
+                </a>
+            </div>
+            
+            <a href="{% url 'catalog:lista' %}" style="
+                font-size: 17px; 
+                font-weight: 800; 
+                color: #ef6c00; 
+                text-decoration: none; 
+                display: flex; 
+                align-items: center; 
+                gap: 8px; 
+                padding: 8px 15px;
+                border-radius: 12px;
+                transition: all 0.2s ease;
+            " onmouseover="this.style.backgroundColor='#fff8f3'; this.style.transform='translateY(-2px)';" onmouseout="this.style.backgroundColor='transparent'; this.style.transform='translateY(0)';">
+                🎸 Catalogo
             </a>
         </div>
-        <nav class="nav-links">
-            {% if user.is_authenticated %}             
-                <form action="{% url 'accounts:logout' %}" method="post" style="display: inline; margin-left: 30px;">
+
+        <nav class="nav-links" style="display: flex; align-items: center; gap: 15px;">
+            
+            {% if user.is_authenticated %} 
+                
+                <a href="{% url 'accounts:profilo' %}" style="
+                    padding: 10px 20px; 
+                    background: white; 
+                    color: #ef6c00; 
+                    border: 2px solid #fde4d0; 
+                    border-radius: 12px; 
+                    font-weight: 700; 
+                    text-decoration: none; 
+                    transition: all 0.2s ease;
+                " onmouseover="this.style.borderColor='#ef6c00'; this.style.boxShadow='0 4px 10px rgba(239, 108, 0, 0.1)';" onmouseout="this.style.borderColor='#fde4d0'; this.style.boxShadow='none';">
+                    👤 Il mio Profilo
+                </a>            
+                
+                <form action="{% url 'accounts:logout' %}" method="post" style="display: inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn-primary">Esci</button>
                 </form>
                 
             {% else %}
-                <a href="{% url 'accounts:login' %}">Accedi</a>
+                <a href="{% url 'accounts:login' %}" style="text-decoration: none; color: #333; font-weight: 700; padding: 10px 15px;">Accedi</a>
                 <a href="{% url 'accounts:registrati' %}" class="btn-primary">Registrati</a>
             {% endif %}
+            
         </nav>
     </header>
 

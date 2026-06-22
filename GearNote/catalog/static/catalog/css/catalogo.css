@@ -1,0 +1,218 @@
+.layout-catalogo {
+    /* 1. IL TRUCCO PER ROMPERE LA GABBIA DEL BASE.HTML E TOCCARE I BORDI LATERIALI */
+    width: 95vw !important;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    
+    /* 2. ESPANSIONE MASSIMA SOPRA E SOTTO */
+    margin: 0 !important;
+    padding: 0px; /* Lascia solo un filo di respiro ai bordi per non tagliare le ombre */
+    
+    /* 3. ALTEZZA COMPLETA E ALLUNGAMENTO VERTICALE */
+    min-height: calc(85vh - 80px); /* Si prende tutto lo schermo meno la barra di navigazione */
+    display: flex;
+    gap: 10px;
+    align-items: stretch; /* Costringe le due bolle ad allungarsi fino al fondo della pagina */
+    box-sizing: border-box;
+}
+
+.bolla-filtri {
+    width: 320px; 
+    flex-shrink: 0; 
+    background: white; 
+    border-radius: 40px; 
+    padding: 35px; 
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+    box-sizing: border-box;
+    position: sticky;
+    top: 20px;
+}
+
+.bolla-vetrina {
+    flex-grow: 1; 
+    background: white; 
+    padding: 40px; 
+    border-radius: 40px; 
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04); 
+    box-sizing: border-box;
+}
+
+/* FILTRI E FORM */
+.filtri-titolo {
+    margin: 0 0 25px 0; 
+    font-size: 22px; 
+    font-weight: 800; 
+    color: #333; 
+    display: flex; 
+    align-items: center; 
+    gap: 10px;
+}
+
+.filtro-label {
+    font-size: 13px; 
+    font-weight: 700; 
+    color: #888; 
+    text-transform: uppercase; 
+    margin-bottom: 8px; 
+    display: block;
+}
+
+.filtro-input {
+    width: 100%; 
+    padding: 14px 18px; 
+    border-radius: 15px; 
+    border: 2px solid #f0f0f0; 
+    background: #fafafa; 
+    font-size: 15px; 
+    color: #333; 
+    font-weight: 500; 
+    box-sizing: border-box; 
+    outline: none; 
+    transition: border-color 0.2s ease;
+}
+
+.filtro-input:focus {
+    border-color: #ef6c00;
+}
+
+.separatore {
+    height: 1px; 
+    background: #f0f0f0; 
+    width: 100%;
+    margin: 20px 0;
+}
+
+.btn-applica {
+    margin-top: 10px; 
+    width: 100%; 
+    background: #ef6c00; 
+    color: white; 
+    border: none; 
+    padding: 16px; 
+    border-radius: 20px; 
+    font-size: 16px; 
+    font-weight: 800; 
+    cursor: pointer; 
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(239, 108, 0, 0.3);
+}
+
+.btn-applica:hover {
+    transform: scale(1.02); 
+    background-color: #e65c00;
+}
+
+/* GRIGLIA E CARD PRODOTTI */
+.griglia-prodotti {
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
+    gap: 30px;
+}
+
+.card-link {
+    text-decoration: none; 
+    color: inherit; 
+    display: block; 
+    height: 100%;
+}
+
+.prodotto-card {
+    background: white; 
+    border: 1px solid #f0f0f0; 
+    border-radius: 24px; 
+    padding: 16px; 
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.prodotto-card:hover {
+    transform: translateY(-6px); 
+    box-shadow: 0 15px 35px rgba(239, 108, 0, 0.08); 
+    border-color: #fde4d0;
+}
+
+.img-container {
+    width: 100%; 
+    height: 240px; 
+    background: #fafafa; 
+    border-radius: 16px; 
+    overflow: hidden; 
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.img-container img {
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover;
+}
+
+.no-foto {
+    color: #ef6c00; 
+    opacity: 0.5; 
+    font-weight: 700; 
+    font-size: 14px;
+}
+
+/* TIPOGRAFIA CARD */
+.prodotto-titolo {
+    margin: 0 0 12px 0; 
+    font-size: 20px; 
+    color: #222; 
+    line-height: 1.3; 
+    font-weight: 800; 
+    flex-grow: 1;
+}
+
+.prodotto-prezzo {
+    font-size: 28px; 
+    font-weight: 900; 
+    color: #ef6c00; 
+    margin-bottom: 16px;
+}
+
+.prodotto-footer {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    border-top: 1px solid #f5f5f5; 
+    padding-top: 14px;
+}
+
+.badge-condizione {
+    font-size: 11px; 
+    text-transform: uppercase; 
+    font-weight: 800; 
+    color: #d35400; 
+    background: #fff8f3; 
+    padding: 5px 12px; 
+    border-radius: 12px;
+}
+
+/* STATO VUOTO */
+.palco-vuoto {
+    grid-column: 1 / -1; 
+    text-align: center; 
+    padding: 100px 20px; 
+    background: #fffcf9; 
+    border: 2px dashed #fde4d0; 
+    border-radius: 30px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+    .layout-catalogo {
+        flex-direction: column;
+        padding: 0 20px;
+    }
+    .bolla-filtri {
+        width: 100%; 
+        position: static;
+    }
+}

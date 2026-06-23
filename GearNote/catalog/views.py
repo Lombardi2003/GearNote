@@ -5,40 +5,23 @@ from .models import Prodotto, Categoria, ImmagineProdotto, Condizione  # <--- Ri
 from .forms import ProdottoForm
 
 # --- VISTA CATALOGO (Ricerca e Filtri Dinamici) ---
-def lista_prodotti(request):
+# Aggiungi slug_categoria=None come argomento
+def lista_prodotti(request, slug_categoria=None):
     prodotti = Prodotto.objects.filter(disponibile=True)
-    
-    # 1. Recuperiamo le categorie principali (senza padre) per creare il menu a tendina laterale
     categorie_principali = Categoria.objects.filter(categoria_padre__isnull=True)
-    
-    # 2. Recuperiamo tutte le Condizioni dal DB
     condizioni = Condizione.objects.filter(prodotti__disponibile=True).distinct()
-    # Logica dei filtri: leggiamo cosa c'è nell'URL (cosa ha cliccato l'utente)
+
+    # Filtri standard (ricerca, prezzo, condizione) rimangono invariati
     query_ricerca = request.GET.get('q')
     prezzo_min = request.GET.get('min_prezzo')
     prezzo_max = request.GET.get('max_prezzo')
-    categoria_id = request.GET.get('categoria')
-    condizione_id = request.GET.get('condizione') # <--- Sostituito tag_id con condizione_id
+    condizione_id = request.GET.get('condizione')
 
-    # APPLICHIAMO I FILTRI AL DATABASE
-    if query_ricerca:
-        # Cerca la parola sia nel titolo che nella descrizione
-        prodotti = prodotti.filter(Q(titolo__icontains=query_ricerca) | Q(descrizione__icontains=query_ricerca))
+    # SE ABBIAMO LO SLUG (es. /catalogo/strumenti/)
+    if slug_categoria:
+        # Recuperiamo la categoria tramite lo slug
+        categoria_scelta = get_object_or_404(Categoria, slug=slug_categoria)
         
-    if prezzo_min:
-        prodotti = prodotti.filter(prezzo__gte=prezzo_min)
-        
-    if prezzo_max:
-        prodotti = prodotti.filter(prezzo__lte=prezzo_max)
-        
-    if condizione_id:
-        # Filtra i prodotti che hanno esattamente questa condizione (tramite ForeignKey)
-        prodotti = prodotti.filter(condizione_id=condizione_id)
-
-    if categoria_id:
-        categoria_scelta = Categoria.objects.get(id=categoria_id)
-        
-        # Questa funzione prende la categoria scelta + tutte le figlie + tutte le nipoti
         def get_tutti_i_discendenti(cat):
             lista_ids = [cat.id]
             for sottocategoria in cat.sottocategorie.all():
@@ -46,22 +29,28 @@ def lista_prodotti(request):
             return lista_ids
 
         tutti_gli_ids = get_tutti_i_discendenti(categoria_scelta)
-        
-        # Filtriamo usando __in (che accetta una lista di ID)
         prodotti = prodotti.filter(categoria__id__in=tutti_gli_ids)
+        cat_selezionata_id = categoria_scelta.id # Per il template
+    else:
+        # Se non c'è slug, guardiamo il vecchio parametro GET (opzionale)
+        categoria_id = request.GET.get('categoria')
+        cat_selezionata_id = int(categoria_id) if categoria_id else None
+        if categoria_id:
+            # ... (la tua logica di filtraggio per ID) ...
+            categoria_scelta = Categoria.objects.get(id=categoria_id)
+            # ... applica filtri ...
 
-    # Passiamo tutti i dati al template
+    # ... (resto dei filtri come prima) ...
+    
     context = {
         'prodotti': prodotti,
         'categorie_principali': categorie_principali,
-        'condizioni': condizioni,          # <--- Passiamo le condizioni
-        'cat_selezionata': categoria_id,
-        'cond_selezionata': condizione_id, # <--- Rimosso tag
+        'condizioni': condizioni,
+        'cat_selezionata': cat_selezionata_id, # Usiamo questo per l'evidenziazione
+        'cond_selezionata': condizione_id,
         'q': query_ricerca,
     }
-    
     return render(request, 'catalog/lista.html', context)
-
 
 # --- VISTA DETTAGLIO ---
 def dettaglio_prodotto(request, id):

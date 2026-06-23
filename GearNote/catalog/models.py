@@ -1,10 +1,12 @@
+import os
 from django.db import models
 from django.contrib.auth.models import User
-import os
+from django.utils.text import slugify
+from django.core.validators import MinValueValidator
 
 class Categoria(models.Model):
     nome = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True, help_text="Versione URL del nome (es. 'chitarre-elettriche')")
+    slug = models.SlugField(unique=True, blank=True)
     
     # LA NUOVA LOGICA: Categorie Padre/Figlio
     categoria_padre = models.ForeignKey(
@@ -14,6 +16,11 @@ class Categoria(models.Model):
         blank=True, 
         related_name='sottocategorie'
     )
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.nome) # Crea lo slug automaticamente dal nome
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name_plural = "Categorie"
@@ -54,7 +61,13 @@ class Prodotto(models.Model):
     
     titolo = models.CharField(max_length=200)
     descrizione = models.TextField()
-    prezzo = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    # VALIDAZIONE AL DATABASE: Impedisce prezzi negativi o pari a zero
+    prezzo = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2,
+        validators=[MinValueValidator(0.01)]
+    )
     
     disponibile = models.BooleanField(default=True, help_text="Togli la spunta se l'oggetto è stato venduto")
     data_inserimento = models.DateTimeField(auto_now_add=True)
@@ -66,6 +79,25 @@ class Prodotto(models.Model):
     def __str__(self):
         return f"{self.titolo} - {self.prezzo}€"
 
+    @property
+    def immagine_principale(self):
+        # 1. Cerca l'immagine marcata come principale
+        prima_foto = self.immagini.filter(principale=True).first()
+        if prima_foto:
+            return prima_foto.immagine.url
+        
+        # 2. Logica per le icone di default basata sulla macro-categoria
+        # Risaliamo alla radice (macro-categoria)
+        cat_radice = self.categoria
+        while cat_radice and cat_radice.categoria_padre:
+            cat_radice = cat_radice.categoria_padre
+            
+        # Se la macro-categoria è "Partiture" (aggiusta il nome o l'ID come preferisci)
+        if cat_radice and "partiture" in cat_radice.nome.lower():
+            return '/static/img/spartito.svg'
+        
+        # Default per Strumenti e tutto il resto
+        return '/static/img/prodotto.svg'
 
 # --- GESTIONE FOTO PRODOTTI ---
 def path_foto_prodotto(instance, filename):

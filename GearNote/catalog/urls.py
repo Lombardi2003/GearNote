@@ -9,4 +9,5 @@ urlpatterns = [
     path('nuovo-annuncio/', views.aggiungi_prodotto, name='aggiungi_prodotto'),
     path('prodotto/<int:prodotto_id>/modifica/', views.modifica_prodotto, name='modifica_prodotto'),
     path('prodotto/<int:prodotto_id>/elimina/', views.elimina_prodotto, name='elimina_prodotto'),
+    path('<slug:slug_categoria>/', views.lista_prodotti, name='categoria_detail'),
 ]

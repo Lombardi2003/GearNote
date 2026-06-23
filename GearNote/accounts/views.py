@@ -4,6 +4,7 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from .forms import RegistrazionePersonalizzataForm, ModificaProfiloForm
+from .models import Profilo
 from catalog.models import Prodotto
 
 # --- VISTA LOGIN PERSONALIZZATA (Smistamento Admin / Utenti) ---
@@ -49,12 +50,16 @@ def logout_view(request):
 # --- VISTA PROFILO ---
 @login_required(login_url='accounts:login')
 def profilo_view(request):
-    # 1. Interroghiamo il database: prendi i prodotti dove il venditore è l'utente loggato
+    # 'profilo' sarà il record esistente o quello appena creato
+    # 'created' è un booleano (True se è stato appena creato)
+    profilo, created = Profilo.objects.get_or_create(user=request.user)
+    
+    # Ora recuperiamo i prodotti
     prodotti_utente = Prodotto.objects.filter(venditore=request.user)
     
     return render(request, 'accounts/profilo.html', {
-        'profilo': request.user.profilo,
-        'miei_prodotti': prodotti_utente, # 2. PASSIAMO I PRODOTTI ALL'HTML!
+        'profilo': profilo,             # Usiamo la variabile 'profilo' appena recuperata
+        'miei_prodotti': prodotti_utente,
     })
 
 # --- VISTA MODIFICA PROFILO ---

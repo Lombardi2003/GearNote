@@ -31,9 +31,22 @@
                 padding: 8px 15px;
                 border-radius: 12px;
                 transition: all 0.2s ease;
-            " onmouseover="this.style.backgroundColor='#fff8f3'; this.style.transform='translateY(-2px)';" onmouseout="this.style.backgroundColor='transparent'; this.style.transform='translateY(0)';">
+            " onmouseover="this.style.backgroundColor='#fff8f3'; this.style.transform='translateY(-2px)';" onmouseout="this.style.backgroundColor='transparent'; this.style.transform='translateY(0)';"
+            >
                 🎸 Catalogo
             </a>
+
+            {% for macro in categorie_principali %}
+                <a href="{% url 'catalog:categoria_detail' macro.slug %}" class="link-macro" style="
+                    font-size: 15px; 
+                    font-weight: 600; 
+                    color: #555; 
+                    text-decoration: none;
+                    transition: color 0.2s;
+                " onmouseover="this.style.color='#ef6c00';" onmouseout="this.style.color='#555';">
+                    {{ macro.nome }}
+                </a>
+            {% endfor %}
         </div>
 
         <nav class="nav-links" style="display: flex; align-items: center; gap: 15px;">

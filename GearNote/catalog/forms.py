@@ -21,7 +21,6 @@ class MultipleFileField(forms.FileField):
             result = single_file_clean(data, initial)
         return result
 
-
 # 3. IL TUO FORM AGGIORNATO
 class ProdottoForm(forms.ModelForm):
     # Sostituiamo forms.FileField con il nostro nuovo MultipleFileField
@@ -47,3 +46,33 @@ class ProdottoForm(forms.ModelForm):
             'prezzo': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
             'descrizione': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Descrivi eventuali difetti, anno di produzione, accessori inclusi...'}),
         }
+
+    # VALIDAZIONE PREZZO (Lato Utente per feedback visivo rapido)
+    def clean_prezzo(self):
+        prezzo = self.cleaned_data.get('prezzo')
+        if prezzo is not None and prezzo <= 0:
+            raise forms.ValidationError("Il prezzo deve essere maggiore di zero.")
+        return prezzo
+
+    # VALIDAZIONE TITOLO
+    def clean_titolo(self):
+        titolo = self.cleaned_data.get('titolo')
+        if len(titolo) < 5:
+            raise forms.ValidationError("Il titolo è troppo breve, inserisci almeno 5 caratteri.")
+        return titolo
+
+    # VALIDAZIONE DESCRIZIONE
+    def clean_descrizione(self):
+        descrizione = self.cleaned_data.get('descrizione')
+        if len(descrizione) < 20:
+            raise forms.ValidationError("La descrizione deve contenere almeno 20 caratteri per aiutare la vendita.")
+        return descrizione
+
+    # VALIDAZIONE FOTO (Controllo sul peso del file)
+    def clean_foto(self):
+        foto = self.cleaned_data.get('foto')
+        if foto:
+            for f in foto:
+                if f.size > 5 * 1024 * 1024:  # Limite 5MB
+                    raise forms.ValidationError(f"Il file {f.name} è troppo grande (max 5MB).")
+        return foto

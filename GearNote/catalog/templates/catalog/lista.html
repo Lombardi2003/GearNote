@@ -113,11 +113,7 @@
                     <div class="prodotto-card">
                         
                         <div class="img-container">
-                            {% if prodotto.immagini.first %}
-                                <img src="{{ prodotto.immagini.first.immagine.url }}" alt="{{ prodotto.titolo }}">
-                            {% else %}
-                                <span class="no-foto">No Foto</span>
-                            {% endif %}
+                            <img src="{{ prodotto.immagine_principale }}" alt="{{ prodotto.titolo }}">
                         </div>
 
                         <h3 class="prodotto-titolo">{{ prodotto.titolo }}</h3>

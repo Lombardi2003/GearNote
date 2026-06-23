@@ -35,7 +35,6 @@ class ProdottoForm(forms.ModelForm):
         fields = [
             'titolo', 
             'categoria', 
-            'strumento_riferimento', 
             'condizione', 
             'prezzo', 
             'descrizione'
@@ -44,7 +43,6 @@ class ProdottoForm(forms.ModelForm):
         widgets = {
             'titolo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Es. Fender Stratocaster Americana...'}),
             'categoria': forms.Select(attrs={'class': 'form-select'}),
-            'strumento_riferimento': forms.Select(attrs={'class': 'form-select'}),
             'condizione': forms.Select(attrs={'class': 'form-select'}),
             'prezzo': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
             'descrizione': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Descrivi eventuali difetti, anno di produzione, accessori inclusi...'}),

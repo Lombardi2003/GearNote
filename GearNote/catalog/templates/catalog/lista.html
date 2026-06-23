@@ -22,16 +22,39 @@
 
             <div>
                 <label class="filtro-label">Categoria</label>
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <label style="font-size: 15px; color: #555; font-weight: 600; cursor: pointer;">
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <label style="font-size: 15px; color: #555; font-weight: 600; cursor: pointer; margin-bottom: 5px;">
                         <input type="radio" name="categoria" value="" {% if not request.GET.categoria %}checked{% endif %} style="accent-color: #ef6c00;"> Tutte
                     </label>
-                    {% for cat in categorie %}
-                        <label style="font-size: 15px; color: #555; font-weight: 600; cursor: pointer;">
-                            <input type="radio" name="categoria" value="{{ cat.id }}" 
-                                   {% if request.GET.categoria|add:"0" == cat.id %}checked{% endif %} 
-                                   style="accent-color: #ef6c00;"> {{ cat.nome }}
-                        </label>
+                    
+                    {% for macro in categorie_principali %}
+                        {% if macro.ha_prodotti_attivi %}
+                            <label style="font-size: 15px; color: #333; font-weight: 800; cursor: pointer; margin-top: 8px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                <input type="radio" name="categoria" value="{{ macro.id }}" 
+                                       {% if request.GET.categoria|add:"0" == macro.id %}checked{% endif %} 
+                                       style="accent-color: #ef6c00;"> {{ macro.nome }}
+                            </label>
+                            
+                            {% for categoria in macro.sottocategorie.all %}
+                                {% if categoria.ha_prodotti_attivi %}
+                                    <label style="font-size: 14px; color: #555; font-weight: 600; cursor: pointer; margin-left: 15px; margin-top: 4px;">
+                                        <input type="radio" name="categoria" value="{{ categoria.id }}" 
+                                               {% if request.GET.categoria|add:"0" == categoria.id %}checked{% endif %} 
+                                               style="accent-color: #ef6c00;"> {{ categoria.nome }}
+                                    </label>
+                                    
+                                    {% for sottocategoria in categoria.sottocategorie.all %}
+                                        {% if sottocategoria.ha_prodotti_attivi %}
+                                            <label style="font-size: 13px; color: #777; font-weight: 500; cursor: pointer; margin-left: 35px; border-left: 2px solid #ddd; padding-left: 8px; margin-top: 2px;">
+                                                <input type="radio" name="categoria" value="{{ sottocategoria.id }}" 
+                                                       {% if request.GET.categoria|add:"0" == sottocategoria.id %}checked{% endif %} 
+                                                       style="accent-color: #ef6c00;"> {{ sottocategoria.nome }}
+                                            </label>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>
@@ -39,16 +62,17 @@
             <div class="separatore"></div>
 
             <div>
-                <label class="filtro-label">Caratteristiche (Tag)</label>
+                <label class="filtro-label">Condizione</label>
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     <label style="font-size: 15px; color: #555; font-weight: 600; cursor: pointer;">
-                        <input type="radio" name="tag" value="" {% if not request.GET.tag %}checked{% endif %} style="accent-color: #ef6c00;"> Qualsiasi
+                        <input type="radio" name="condizione" value="" {% if not request.GET.condizione %}checked{% endif %} style="accent-color: #ef6c00;"> Qualsiasi
                     </label>
-                    {% for singolo_tag in tag_list %}
+                    
+                    {% for singola_condizione in condizioni %}
                         <label style="font-size: 15px; color: #555; font-weight: 600; cursor: pointer;">
-                            <input type="radio" name="tag" value="{{ singolo_tag.id }}" 
-                                   {% if request.GET.tag|add:"0" == singolo_tag.id %}checked{% endif %} 
-                                   style="accent-color: #ef6c00;"> {{ singolo_tag.nome }}
+                            <input type="radio" name="condizione" value="{{ singola_condizione.id }}" 
+                                   {% if request.GET.condizione|add:"0" == singola_condizione.id %}checked{% endif %} 
+                                   style="accent-color: #ef6c00;"> {{ singola_condizione.nome }}
                         </label>
                     {% endfor %}
                 </div>
@@ -66,8 +90,8 @@
 
             <button type="submit" class="btn-applica">Applica Filtri</button>
             
-            {% if request.GET.q or request.GET.categoria or request.GET.tag or request.GET.min_prezzo or request.GET.max_prezzo %}
-                <a href="{% url 'catalog:lista' %}" style="text-align: center; font-size: 13px; color: #ef6c00; text-decoration: none; margin-top: 10px;">Reset Filtri</a>
+            {% if request.GET.q or request.GET.categoria or request.GET.condizione or request.GET.min_prezzo or request.GET.max_prezzo %}
+                <a href="{% url 'catalog:lista' %}" style="text-align: center; font-size: 13px; color: #ef6c00; text-decoration: none; margin-top: 10px; font-weight: bold;">Reset Filtri</a>
             {% endif %}
         </form>
     </div>
@@ -101,7 +125,7 @@
                         <div class="prodotto-prezzo">{{ prodotto.prezzo }} €</div>
                         
                         <div class="prodotto-footer">
-                            <span class="badge-condizione">{{ prodotto.get_condizione_display }}</span>
+                            <span class="badge-condizione">{{ prodotto.condizione.nome }}</span>
                             <span style="font-size: 13px; color: #999; font-weight: 700;">@{{ prodotto.venditore.username }}</span>
                         </div>
                     </div>
@@ -116,4 +140,4 @@
         </div>
     </div>
 </div>
-{% endblock content %}
+{% endblock content %}  

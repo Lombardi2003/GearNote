@@ -1,0 +1,10 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+<rect width="300" height="300" rx="0" fill="#fdf8f4"/>
+<polygon points="0,300 120,0 240,300" fill="#e8801f" fill-opacity="0.06"/>
+<polygon points="60,300 180,0 300,300" fill="#e8801f" fill-opacity="0.06"/>
+<rect x="0" y="0" width="300" height="4" fill="#e8801f"/>
+<text x="150" y="182" text-anchor="middle" font-family="Georgia, serif" font-size="110" fill="#e8801f" fill-opacity="0.08" font-weight="400">♪</text>
+<text x="150" y="174" text-anchor="middle" font-family="Georgia, serif" font-size="88" fill="#e8801f" fill-opacity="0.9" font-weight="400">♪</text>
+<rect x="40" y="210" width="220" height="1" fill="#e8801f" fill-opacity="0.15"/>
+<rect x="0" y="296" width="300" height="4" fill="#e8801f" fill-opacity="0.35"/>
+</svg>

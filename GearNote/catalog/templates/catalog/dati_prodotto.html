@@ -133,6 +133,7 @@
         font-weight: bold;
     }
 
+    /* Bottoni in fondo */
     .azioni-form {
         display: flex;
         gap: 15px;
@@ -140,16 +141,18 @@
     }
 
     .azioni-form .btn-primary {
-        flex: 2;
+        flex: 1; /* Ora divide lo spazio a metà esatta con l'altro tasto */
         border-radius: 50px;
         padding: 14px;
         font-size: 16px;
-        border: none;
         cursor: pointer;
+        text-align: center;
+        box-sizing: border-box;
+        border: 2px solid transparent; /* Bilancia i 2px di bordo del tasto Annulla */
     }
 
     .btn-annulla {
-        flex: 1;
+        flex: 1; /* Spazio identico al tasto primario */
         padding: 14px;
         border: 2px solid var(--bordo-input);
         background: transparent;
@@ -158,7 +161,11 @@
         text-decoration: none;
         font-weight: bold;
         text-align: center;
+        box-sizing: border-box;
         transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .btn-annulla:hover {
@@ -189,6 +196,26 @@
         
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
+
+            {% if prodotto and prodotto.immagini.exists %}
+                <div class="campo-gruppo" style="margin-bottom: 30px;">
+                    <label style="color: var(--testo-titoli); font-weight: 800;">Foto attuali dell'annuncio</label>
+                    <p style="margin: 0 0 12px 0; font-size: 13px; color: var(--testo-secondario);">Seleziona le caselle delle foto che desideri rimuovere definitivamente:</p>
+                    
+                    <div style="display: flex; flex-wrap: wrap; gap: 15px; background: #fbfbfb; padding: 20px; border: 1px solid var(--bordo-input); border-radius: 12px;">
+                        {% for img in prodotto.immagini.all %}
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; width: 110px; background: white; padding: 8px; border-radius: 10px; border: 1px solid #eee; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                                <img src="{{ img.immagine.url }}" style="width: 90px; height: 90px; object-fit: cover; border-radius: 6px;">
+                                
+                                <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; text-transform: none; color: #d9534f; cursor: pointer; margin: 0; letter-spacing: 0;">
+                                    <input type="checkbox" name="elimina_foto" value="{{ img.id }}" style="accent-color: #d9534f; width: 15px; height: 15px; cursor: pointer;">
+                                    Elimina
+                                </label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
 
             {% for field in form %}
                 <div class="campo-gruppo">

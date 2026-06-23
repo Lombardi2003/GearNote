@@ -1,0 +1,127 @@
+[
+  {
+    "macro": "Strumenti",
+    "categorie": [
+      {
+        "nome": "Corde",
+        "sottocategorie": [
+          "Chitarre Elettriche",
+          "Chitarre Acustiche",
+          "Chitarre Classiche",
+          "Bassi Elettrici",
+          "Ukulele",
+          "Arpe"
+        ]
+      },
+      {
+        "nome": "Tastiere",
+        "sottocategorie": [
+          "Pianoforti Acustici",
+          "Pianoforti Digitali",
+          "Sintetizzatori",
+          "Organi"
+        ]
+      },
+      {
+        "nome": "Fiati",
+        "sottocategorie": [
+          "Sassofoni Soprano",
+          "Sassofoni Alto",
+          "Sassofoni Tenore",
+          "Sassofoni Baritono",
+          "Clarinetti",
+          "Clarinetti Bassi",
+          "Flauti Traversi",
+          "Flauti Dolci",
+          "Ottavini",
+          "Oboi",
+          "Fagotti",
+          "Trombe",
+          "Tromboni",
+          "Corni Francesi",
+          "Tube ed Eufoni",
+          "Flicorni",
+          "Armonica a Bocca"
+        ]
+      },
+      {
+        "nome": "Batterie e Percussioni",
+        "sottocategorie": [
+          "Batterie Acustiche",
+          "Batterie Elettroniche",
+          "Piatti",
+          "Percussioni Etniche"
+        ]
+      },
+      {
+        "nome": "Archi",
+        "sottocategorie": [
+          "Violini",
+          "Viole",
+          "Violoncelli",
+          "Contrabbassi"
+        ]
+      }
+    ]
+  },
+  {
+    "macro": "Partiture e Didattica",
+    "categorie": [
+      {
+        "nome": "Metodi di Studio",
+        "sottocategorie": [
+          "Chitarra e Basso",
+          "Pianoforte",
+          "Fiati",
+          "Batteria",
+          "Teoria Musicale"
+        ]
+      },
+      {
+        "nome": "Spartiti",
+        "sottocategorie": [
+          "Musica Classica",
+          "Jazz e Blues",
+          "Pop e Rock"
+        ]
+      }
+    ]
+  },
+  {
+    "macro": "Accessori",
+    "categorie": [
+      {
+        "nome": "Custodie e Borse",
+        "sottocategorie": [
+          "Per Chitarra e Basso",
+          "Per Tastiere",
+          "Per Fiati e Archi"
+        ]
+      },
+      {
+        "nome": "Cavi e Connessioni",
+        "sottocategorie": [
+          "Cavi Jack",
+          "Cavi XLR",
+          "Adattatori e Alimentatori"
+        ]
+      },
+      {
+        "nome": "Supporti e Stand",
+        "sottocategorie": [
+          "Stand per Strumenti",
+          "Leggii",
+          "Aste per Microfono"
+        ]
+      },
+      {
+        "nome": "Manutenzione",
+        "sottocategorie": [
+          "Corde",
+          "Plettri e Accessori",
+          "Kit di Pulizia"
+        ]
+      }
+    ]
+  }
+]

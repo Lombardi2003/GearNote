@@ -9,21 +9,45 @@
     <div class="bolla-vetrina" style="display: flex; gap: 40px; padding: 40px; border-radius: 40px; background: white;">
         
         <div style="flex: 1.2; display: flex; flex-direction: column; gap: 15px;">
-            <div style="width: 100%; height: 500px; background: #fafafa; border-radius: 25px; overflow: hidden; border: 1px solid #f0f0f0;">
+            
+            <div style="width: 100%; height: 500px; background: #fafafa; border-radius: 25px; overflow: hidden; border: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: center;">
                 {% if prodotto.immagini.all %}
-                    <img src="{{ prodotto.immagini.first.immagine.url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img id="immagine-grande" src="{{ prodotto.immagini.first.immagine.url }}" style="width: 100%; height: 100%; object-fit: contain; transition: opacity 0.2s ease;">
                 {% else %}
-                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #ccc;">Nessuna immagine</div>
+                    <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #ccc; font-weight: bold;">Nessuna immagine</div>
                 {% endif %}
             </div>
             
-            <div style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 5px;">
-                {% for img in prodotto.immagini.all %}
-                    <div style="width: 100px; height: 100px; border-radius: 15px; overflow: hidden; border: 2px solid #fde4d0; flex-shrink: 0;">
-                        <img src="{{ img.immagine.url }}" style="width: 100%; height: 100%; object-fit: cover;">
-                    </div>
-                {% endfor %}
-            </div>
+            {% if prodotto.immagini.count > 1 %}
+                <div style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 5px;">
+                    {% for img in prodotto.immagini.all %}
+                        <div class="box-miniatura" onclick="scorriGalleria('{{ img.immagine.url }}', this)" 
+                             style="width: 100px; height: 100px; border-radius: 15px; overflow: hidden; border: 2px solid {% if forloop.first %}#ef6c00{% else %}transparent{% endif %}; flex-shrink: 0; cursor: pointer; transition: all 0.2s ease;">
+                            <img src="{{ img.immagine.url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <script>
+                    function scorriGalleria(urlNuova, miniaturaCliccata) {
+                        const imgGrande = document.getElementById('immagine-grande');
+                        
+                        // Dissolvenza
+                        imgGrande.style.opacity = '0.3';
+                        setTimeout(() => {
+                            imgGrande.src = urlNuova;
+                            imgGrande.style.opacity = '1';
+                        }, 150);
+
+                        // Rimuove il bordo arancione da tutte le miniature
+                        document.querySelectorAll('.box-miniatura').forEach(box => {
+                            box.style.borderColor = 'transparent';
+                        });
+                        // Aggiunge il bordo solo a quella selezionata
+                        miniaturaCliccata.style.borderColor = '#ef6c00';
+                    }
+                </script>
+            {% endif %}
         </div>
 
         <div style="flex: 0.8; display: flex; flex-direction: column;">

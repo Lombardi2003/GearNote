@@ -1,0 +1,11 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+<rect width="300" height="300" rx="12" fill="#fdf8f4"/>
+<rect x="0" y="0" width="300" height="4" rx="2" fill="#e8801f"/>
+<rect x="0" y="296" width="300" height="4" rx="2" fill="#e8801f" fill-opacity="0.3"/>
+<g transform="translate(150,140)" fill="#e8c4a0">
+  <rect x="-38" y="-48" width="76" height="60" rx="6"/>
+  <rect x="-48" y="-54" width="22" height="14" rx="3"/>
+  <ellipse cx="0" cy="36" rx="38" ry="8" fill="#e8c4a0" fill-opacity="0.4"/>
+</g>
+<text x="150" y="218" text-anchor="middle" font-family="system-ui, sans-serif" font-size="13" fill="#c49060" letter-spacing="1">nessuna immagine</text>
+</svg>

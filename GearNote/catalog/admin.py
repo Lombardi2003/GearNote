@@ -1,15 +1,29 @@
 from django.contrib import admin
-from .models import Categoria, Prodotto
+from .models import Categoria, Condizione, Prodotto, ImmagineProdotto # <--- Nota: qui c'è Condizione, non più Tag
 
+# --- 1. CONFIGURAZIONE CATEGORIE ---
 @admin.register(Categoria)
 class CategoriaAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'categoria_padre')
+    list_display = ('nome', 'categoria_padre', 'slug')
+    prepopulated_fields = {'slug': ('nome',)} 
+    list_filter = ('categoria_padre',)
     search_fields = ('nome',)
+
+# --- 2. CONFIGURAZIONE CONDIZIONE (Sostituisce i Tag) ---
+@admin.register(Condizione)
+class CondizioneAdmin(admin.ModelAdmin):
+    list_display = ('nome',)
+    search_fields = ('nome',)
+
+# --- 3. CONFIGURAZIONE PRODOTTI ---
+class ImmagineProdottoInline(admin.TabularInline):
+    model = ImmagineProdotto
+    extra = 1
 
 @admin.register(Prodotto)
 class ProdottoAdmin(admin.ModelAdmin):
-    # Colonne visibili nella tabella riassuntiva
-    list_display = ('titolo', 'categoria', 'strumento_riferimento', 'prezzo', 'venditore')
-    # Crea in automatico la barra laterale destra con i filtri!
-    list_filter = ('categoria', 'strumento_riferimento', 'condizione')
+    list_display = ('titolo', 'prezzo', 'categoria', 'condizione', 'venditore', 'disponibile')
+    list_filter = ('disponibile', 'categoria', 'condizione')
     search_fields = ('titolo', 'descrizione')
+    
+    inlines = [ImmagineProdottoInline]

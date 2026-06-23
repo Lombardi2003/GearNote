@@ -3,13 +3,16 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
+from catalog import views as catalog_views
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('catalogo/', include('catalog.urls')),
     path('carrello/', include('cart.urls')),
-    path('404/', TemplateView.as_view(template_name='404.html'))
+    path('404/', TemplateView.as_view(template_name='404.html')),
+    path('', catalog_views.home_view, name='home'),
 ]
 
 # Questa riga crea il "ponte" per gli statici e i media

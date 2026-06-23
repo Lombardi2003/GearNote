@@ -134,3 +134,12 @@ def elimina_prodotto(request, prodotto_id):
         return redirect('accounts:profilo')
         
     return render(request, 'catalog/elimina.html', {'prodotto': prodotto})
+
+
+# --- VISTA HOMEPAGE ---
+def home_view(request):
+    prodotti_recenti = Prodotto.objects.filter(disponibile=True).order_by('-id')[:4]
+    
+    return render(request, 'home.html', {
+        'prodotti_recenti': prodotti_recenti
+    })

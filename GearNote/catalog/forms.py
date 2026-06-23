@@ -1,11 +1,9 @@
 from django import forms
 from .models import Prodotto
 
-# 1. Il widget che abilita la selezione multipla nel browser
 class MultipleFileInput(forms.ClearableFileInput):
     allow_multiple_selected = True
 
-# 2. LA SOLUZIONE LOGICA: Un campo form personalizzato che sa convalidare una LISTA di file
 class MultipleFileField(forms.FileField):
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('widget', MultipleFileInput(attrs={'multiple': True, 'class': 'form-control'}))
@@ -14,16 +12,12 @@ class MultipleFileField(forms.FileField):
     def clean(self, data, initial=None):
         single_file_clean = super().clean
         if isinstance(data, (list, tuple)):
-            # Se riceviamo una lista di file, li convalidiamo uno per uno
             result = [single_file_clean(d, initial) for d in data]
         else:
-            # Se è un file singolo, usiamo la convalida standard
             result = single_file_clean(data, initial)
         return result
 
-# 3. IL TUO FORM AGGIORNATO
 class ProdottoForm(forms.ModelForm):
-    # Sostituiamo forms.FileField con il nostro nuovo MultipleFileField
     foto = MultipleFileField(
         required=False,
         label="Carica le foto dello strumento"

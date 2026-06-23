@@ -6,29 +6,26 @@ from django.urls import reverse_lazy
 from .forms import RegistrazionePersonalizzataForm, ModificaProfiloForm
 from .models import Profilo
 from catalog.models import Prodotto
+from cart.models import Ordine 
 
-# --- VISTA LOGIN PERSONALIZZATA (Smistamento Admin / Utenti) ---
+
+# --- VISTA LOGIN ---
 class CustomLoginView(LoginView):
     template_name = 'accounts/login.html'
-    # Se uno è già loggato e va su /login/, lo rimbalziamo via
     redirect_authenticated_user = True 
 
     def get_success_url(self):
-        # Se chi ha fatto l'accesso è un Superuser (Admin)...
         if self.request.user.is_superuser:
-            return '/admin/'  # ...va direttamente al pannello di controllo
-        # Altrimenti, è un utente normale e va al suo profilo
+            return '/admin/'
         return reverse_lazy('accounts:profilo')
 
 
 # --- VISTA REGISTRAZIONE ---
-# Cerca questa funzione dentro accounts/views.py e aggiorna solo questa riga:
 def registrazione_view(request):
     if request.user.is_authenticated:
         return redirect('accounts:profilo')
 
     if request.method == 'POST':
-        # REGOLA D'ORO: Aggiungi request.FILES come secondo argomento!
         form = RegistrazionePersonalizzataForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save()
@@ -46,20 +43,19 @@ def logout_view(request):
         logout(request)
         return redirect('/')
 
-
 # --- VISTA PROFILO ---
 @login_required(login_url='accounts:login')
 def profilo_view(request):
-    # 'profilo' sarà il record esistente o quello appena creato
-    # 'created' è un booleano (True se è stato appena creato)
     profilo, created = Profilo.objects.get_or_create(user=request.user)
     
-    # Ora recuperiamo i prodotti
     prodotti_utente = Prodotto.objects.filter(venditore=request.user)
+
+    miei_ordini = Ordine.objects.filter(utente=request.user).order_by('-creato_il')
     
     return render(request, 'accounts/profilo.html', {
-        'profilo': profilo,             # Usiamo la variabile 'profilo' appena recuperata
+        'profilo': profilo,           
         'miei_prodotti': prodotti_utente,
+        'miei_ordini': miei_ordini,
     })
 
 # --- VISTA MODIFICA PROFILO ---
@@ -79,15 +75,11 @@ def modifica_profilo(request):
 def disattiva_account(request):
     if request.method == 'POST':
         user = request.user
-        # Il "Soft Delete": l'utente esiste ancora nel DB ma è disattivato
         user.is_active = False 
         user.save()
         
-        # Facciamo il logout automatico
         logout(request)
         
-        # Rimandiamo alla pagina principale
         return redirect('/') 
     
-    # Se qualcuno prova ad accedere tramite URL diretto (GET), lo rimandiamo al profilo
     return redirect('accounts:profilo')

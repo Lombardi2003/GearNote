@@ -6,14 +6,7 @@ from .models import Profilo
 from django.conf import settings
 import os
 
-# ==========================================================
-# 1. IL MIXIN GLOBALE DI VALIDAZIONE (Scritto una volta sola)
-# ==========================================================
 class ValidazioneProfiloMixin:
-    """
-    Raccoglie tutte le regole di validazione comuni sia alla 
-    registrazione che alla modifica del profilo.
-    """
     def clean_eta(self):
         eta = self.cleaned_data.get('eta')
         if eta is not None:
@@ -41,10 +34,6 @@ class ValidazioneProfiloMixin:
             raise forms.ValidationError("Il nome della città è troppo corto.")
         return citta
 
-
-# ==========================================================
-# 2. FORM DI REGISTRAZIONE (Eredita dal Mixin)
-# ==========================================================
 class RegistrazionePersonalizzataForm(ValidazioneProfiloMixin, UserCreationForm):
     nome = forms.CharField(max_length=50, label="Nome", widget=forms.TextInput(attrs={'placeholder': 'Es. Mario'}))
     cognome = forms.CharField(max_length=50, label="Cognome", widget=forms.TextInput(attrs={'placeholder': 'Es. Rossi'}))
@@ -84,10 +73,6 @@ class RegistrazionePersonalizzataForm(ValidazioneProfiloMixin, UserCreationForm)
             
         return user
 
-
-# ==========================================================
-# 3. FORM DI MODIFICA (Eredita dal Mixin)
-# ==========================================================
 class ModificaProfiloForm(ValidazioneProfiloMixin, forms.ModelForm):
     username = forms.CharField(label="Username", required=True)
     nome = forms.CharField(max_length=50, label="Nome", required=True, widget=forms.TextInput(attrs={'placeholder': 'Es. Mario'}))
@@ -139,34 +124,25 @@ class ModificaProfiloForm(ValidazioneProfiloMixin, forms.ModelForm):
     def save(self, commit=True):
         profilo = super().save(commit=False)
         user = profilo.user
-        
-        # Vecchio username per controllo
         vecchio_username = user.username
         
-        # Aggiornamento dati user
         user.username = self.cleaned_data['username']
         user.first_name = self.cleaned_data['nome']
         user.last_name = self.cleaned_data['cognome']
         user.email = self.cleaned_data['email']
-        user.save() # Salviamo subito l'user per avere il nuovo username
+        user.save()
 
-        # --- GESTIONE RINOMINAZIONE FOTO ---
         if vecchio_username != user.username and profilo.foto_profilo:
-            # Recuperiamo il percorso vecchio e quello nuovo
             estensione = os.path.splitext(profilo.foto_profilo.name)[1]
             nuovo_nome_file = f"foto_profilo/{user.username}{estensione}"
             
-            # Percorsi assoluti (su disco)
             vecchio_path = profilo.foto_profilo.path
             nuovo_path = os.path.join(settings.MEDIA_ROOT, nuovo_nome_file)
             
-            # Rinominiamo il file fisico sul disco
             os.rename(vecchio_path, nuovo_path)
             
-            # Aggiorniamo il database con il nuovo percorso
             profilo.foto_profilo.name = nuovo_nome_file
 
-        # Gestione eliminazione (come avevi già)
         if self.cleaned_data.get('elimina_foto'):
             profilo.foto_profilo.delete(save=False)
             profilo.foto_profilo = None            

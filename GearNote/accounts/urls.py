@@ -10,16 +10,13 @@ urlpatterns = [
     path('registrati/', views.registrazione_view, name='registrati'),
     
     path('login/', CustomLoginView.as_view(), name='login'),
-    # Django 5 richiede una richiesta POST per il logout nativo, che gestiremo tramite form
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
-    # Nuova rotta per la dashboard dell'utente
     path('profilo/', views.profilo_view, name='profilo'),
 
     path('modifica/', views.modifica_profilo, name='modifica_profilo'),
 
-    # Rotta per il cambio password
     path('password-change/', auth_views.PasswordChangeView.as_view(
         template_name='accounts/cambia_password.html',
-        success_url='/accounts/profilo/' # Ridirige al profilo una volta completato con successo
+        success_url='/accounts/profilo/'
     ), name='password_change'),
 ]

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Checkout - GearNote{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 40px auto; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+    <h1 style="margin-bottom: 20px;">Dati di Spedizione</h1>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div style="padding: 10px; background: #ffebee; color: #c62828; border-radius: 8px; margin-bottom: 20px;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" onsubmit="this.querySelector('button').disabled=true; this.querySelector('button').innerText='Elaborazione...';">
+        {% csrf_token %}
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            <input type="text" name="nome" placeholder="Nome Completo" required minlength="3" style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            <input type="text" name="indirizzo" placeholder="Indirizzo (Via, Numero civico)" required style="padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            <div style="display: flex; gap: 10px;">
+                <input type="text" name="citta" placeholder="Città" required style="flex: 2; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+                <input type="text" name="cap" placeholder="CAP" required pattern="\d{5}" title="Inserisci 5 cifre" style="flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px;">
+            </div>
+            <button type="submit" style="padding: 15px; background: #ef6c00; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">
+                Conferma e Paga
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

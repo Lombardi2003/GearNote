@@ -6,7 +6,6 @@ class AccountsConfig(AppConfig):
     name = 'accounts'
 
     def ready(self):
-        # Colleghiamo la funzione di setup al segnale post_migrate
         post_migrate.connect(setup_system, sender=self)
 
 def setup_system(sender, **kwargs):

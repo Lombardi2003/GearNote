@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Carrello - GearNote{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: center; align-items: flex-start; width: 100%; min-height: 80vh; padding: 40px 0;">
+    
+    <div style="width: 95%; max-width: 1200px; display: flex; gap: 40px; flex-wrap: wrap;">
+
+        <div style="flex: 1.5; min-width: 350px; background: white; padding: 40px; border-radius: 30px; box-shadow: 0 8px 30px rgba(0,0,0,0.06); box-sizing: border-box;">
+            <h1 style="font-size: 32px; color: #222; margin-top: 0; margin-bottom: 30px; font-weight: 900; letter-spacing: -0.5px;">Il tuo Carrello</h1>
+
+            {% if carrello.elementi.all %}
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    {% for elemento in carrello.elementi.all %}
+                        <div style="display: flex; align-items: center; gap: 20px; padding: 20px; border: 1px solid #eee; border-radius: 20px; transition: all 0.2s ease;"
+                             onmouseover="this.style.borderColor='#fde4d0'; this.style.backgroundColor='#fafafa';" onmouseout="this.style.borderColor='#eee'; this.style.backgroundColor='transparent';">
+                            
+                            <div style="width: 90px; height: 90px; border-radius: 12px; overflow: hidden; background: #fff; flex-shrink: 0; border: 1px solid #f5f5f5;">
+                                <img src="{{ elemento.prodotto.immagine_principale }}" style="width: 100%; height: 100%; object-fit: contain;">
+                            </div>
+                            
+                            <div style="flex: 1;">
+                                <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #333; font-weight: 800;">{{ elemento.prodotto.titolo }}</h3>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <span style="font-size: 13px; color: #888; background: #f4f4f4; padding: 4px 10px; border-radius: 8px; font-weight: 600;">Qtà: {{ elemento.quantita }}</span>
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: right; padding-right: 15px;">
+                                <div style="font-size: 22px; font-weight: 900; color: #ef6c00;">{{ elemento.totale }} €</div>
+                            </div>
+                            
+                            <form action="{% url 'cart:rimuovi_dal_carrello' %}" method="POST" style="margin: 0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="elemento_id" value="{{ elemento.id }}">
+                                <button type="submit" title="Rimuovi dal carrello" style="background: none; border: none; color: #bbb; cursor: pointer; padding: 10px; font-size: 22px; transition: 0.2s;" 
+                                        onmouseover="this.style.color='#d9534f'; this.style.transform='scale(1.1)';" onmouseout="this.style.color='#bbb'; this.style.transform='scale(1)';">
+                                    🗑️
+                                </button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 60px 0;">
+                    <div style="font-size: 60px; margin-bottom: 20px; opacity: 0.5;">🛒</div>
+                    <h3 style="color: #444; font-size: 24px; font-weight: 800; margin-bottom: 10px;">Il tuo carrello è vuoto</h3>
+                    <p style="color: #777; margin-bottom: 30px;">Sembra che tu non abbia ancora aggiunto nessuno strumento.</p>
+                    <a href="{% url 'catalog:lista' %}" style="display: inline-block; padding: 16px 30px; background: #ef6c00; color: white; border-radius: 14px; text-decoration: none; font-weight: 800; font-size: 16px; transition: 0.2s; box-shadow: 0 4px 15px rgba(239, 108, 0, 0.2);"
+                       onmouseover="this.style.backgroundColor='#e65c00'; this.style.transform='translateY(-2px)';" onmouseout="this.style.backgroundColor='#ef6c00'; this.style.transform='translateY(0)';">
+                        Torna al Catalogo
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        {% if carrello.elementi.all %}
+            <div style="flex: 0.8; min-width: 320px; background: #fff8f3; padding: 40px; border-radius: 30px; box-shadow: 0 8px 30px rgba(0,0,0,0.04); height: fit-content; border: 1px solid #fde4d0; box-sizing: border-box;">
+                <h2 style="margin-top: 0; font-size: 24px; color: #333; font-weight: 900; border-bottom: 2px solid #fce8e8; padding-bottom: 20px; margin-bottom: 25px;">Riepilogo Ordine</h2>
+
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; color: #555; font-size: 16px;">
+                    <span>Articoli ({{ carrello.numero_articoli }}):</span>
+                    <strong style="color: #333;">{{ carrello.totale_carrello }} €</strong>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; margin-bottom: 25px; color: #555; font-size: 16px;">
+                    <span>Spedizione:</span>
+                    <strong style="color: #333;">Calcolata dopo</strong>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; border-top: 2px solid #fde4d0; padding-top: 20px;">
+                    <span style="color: #222; font-size: 20px; font-weight: 900;">Totale:</span>
+                    <span style="color: #ef6c00; font-size: 28px; font-weight: 900;">{{ carrello.totale_carrello }} €</span>
+                </div>
+
+                <a href="{% url 'cart:checkout' %}" style="display: block; width: 100%; text-align: center; text-decoration: none; padding: 20px; background: #ef6c00; color: white; border: none; border-radius: 16px; font-weight: 800; font-size: 18px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 6px 20px rgba(239, 108, 0, 0.25); box-sizing: border-box;"
+                onmouseover="this.style.backgroundColor='#e65c00'; this.style.transform='translateY(-2px)';" onmouseout="this.style.backgroundColor='#ef6c00'; this.style.transform='translateY(0)';"
+                >
+                    Procedi al Checkout 🚀
+                </a>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}

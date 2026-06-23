@@ -15,7 +15,7 @@
             
             <div>
                 <label class="filtro-label">Ricerca</label>
-                <input type="text" name="q" placeholder="Es. Fender Stratocaster..." class="filtro-input">
+                <input type="text" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Es. Fender Stratocaster..." class="filtro-input">
             </div>
 
             <div class="separatore"></div>
@@ -24,11 +24,33 @@
                 <label class="filtro-label">Categoria</label>
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     <label style="font-size: 15px; color: #555; font-weight: 600; cursor: pointer;">
-                        <input type="checkbox" style="accent-color: #ef6c00;"> Tutte
+                        <input type="radio" name="categoria" value="" {% if not request.GET.categoria %}checked{% endif %} style="accent-color: #ef6c00;"> Tutte
                     </label>
+                    {% for cat in categorie %}
+                        <label style="font-size: 15px; color: #555; font-weight: 600; cursor: pointer;">
+                            <input type="radio" name="categoria" value="{{ cat.id }}" 
+                                   {% if request.GET.categoria|add:"0" == cat.id %}checked{% endif %} 
+                                   style="accent-color: #ef6c00;"> {{ cat.nome }}
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="separatore"></div>
+
+            <div>
+                <label class="filtro-label">Caratteristiche (Tag)</label>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
                     <label style="font-size: 15px; color: #555; font-weight: 600; cursor: pointer;">
-                        <input type="checkbox" style="accent-color: #ef6c00;"> Chitarre & Bassi
+                        <input type="radio" name="tag" value="" {% if not request.GET.tag %}checked{% endif %} style="accent-color: #ef6c00;"> Qualsiasi
                     </label>
+                    {% for singolo_tag in tag_list %}
+                        <label style="font-size: 15px; color: #555; font-weight: 600; cursor: pointer;">
+                            <input type="radio" name="tag" value="{{ singolo_tag.id }}" 
+                                   {% if request.GET.tag|add:"0" == singolo_tag.id %}checked{% endif %} 
+                                   style="accent-color: #ef6c00;"> {{ singolo_tag.nome }}
+                        </label>
+                    {% endfor %}
                 </div>
             </div>
 
@@ -37,12 +59,16 @@
             <div>
                 <label class="filtro-label">Prezzo (€)</label>
                 <div style="display: flex; gap: 15px;">
-                    <input type="number" name="min_prezzo" placeholder="Min" class="filtro-input" style="padding: 12px;">
-                    <input type="number" name="max_prezzo" placeholder="Max" class="filtro-input" style="padding: 12px;">
+                    <input type="number" name="min_prezzo" value="{{ request.GET.min_prezzo }}" placeholder="Min" class="filtro-input" style="padding: 12px;">
+                    <input type="number" name="max_prezzo" value="{{ request.GET.max_prezzo }}" placeholder="Max" class="filtro-input" style="padding: 12px;">
                 </div>
             </div>
 
             <button type="submit" class="btn-applica">Applica Filtri</button>
+            
+            {% if request.GET.q or request.GET.categoria or request.GET.tag or request.GET.min_prezzo or request.GET.max_prezzo %}
+                <a href="{% url 'catalog:lista' %}" style="text-align: center; font-size: 13px; color: #ef6c00; text-decoration: none; margin-top: 10px;">Reset Filtri</a>
+            {% endif %}
         </form>
     </div>
 
@@ -84,7 +110,7 @@
                 <div class="palco-vuoto">
                     <span style="font-size: 60px; display: block; margin-bottom: 20px;">🎷</span>
                     <h3 style="color: #ef6c00; font-size: 28px; font-weight: 800; margin: 0 0 15px 0;">Il palco è vuoto!</h3>
-                    <p style="color: #888; font-size: 18px; font-weight: 500; margin: 0;">Non ci sono strumenti in vendita al momento.</p>
+                    <p style="color: #888; font-size: 18px; font-weight: 500; margin: 0;">Nessuno strumento corrisponde alla tua ricerca.</p>
                 </div>
             {% endfor %}
         </div>

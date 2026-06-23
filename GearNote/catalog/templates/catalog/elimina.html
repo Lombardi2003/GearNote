@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Elimina Annuncio - GearNote{% endblock %}
+
+{% block content %}
+<div style="min-height: 75vh; display: flex; align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: white; padding: 45px; border-radius: 35px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); text-align: center; max-width: 500px; width: 100%;">
+        <span style="font-size: 60px; display: block; margin-bottom: 20px;">⚠️</span>
+        <h2 style="color: #333; font-weight: 800; margin: 0 0 15px 0; font-size: 26px;">Sei davvero sicuro?</h2>
+        <p style="color: #777; font-size: 16px; font-weight: 500; margin: 0 0 35px 0; line-height: 1.5;">
+            Stai per eliminare definitivamente l'annuncio per <strong>"{{ prodotto.titolo }}"</strong>. Questa azione cancellerà anche tutte le foto collegate e non potrà essere annullata.
+        </p>
+
+        <form method="POST" style="display: flex; flex-direction: column; gap: 12px;">
+            {% csrf_token %}
+            <button type="submit" style="background: #d9534f; color: white; border: none; padding: 14px; border-radius: 50px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#c9302c'" onmouseout="this.style.backgroundColor='#d9534f'">
+                Sì, Elimina Definitivamente
+            </button>
+            <a href="{% url 'accounts:profilo' %}" style="background: #f5f5f5; color: #555; text-decoration: none; padding: 14px; border-radius: 50px; font-size: 16px; font-weight: 700; border: 1px solid #e0e0e0; transition: background 0.2s;" onmouseover="this.style.backgroundColor='#eeeeee'" onmouseout="this.style.backgroundColor='#f5f5f5'">
+                No, Annulla e Torna Indietro
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

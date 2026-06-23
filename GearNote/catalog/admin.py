@@ -1,18 +1,15 @@
 from django.contrib import admin
-from .models import Categoria, Prodotto, ImmagineProdotto
-
-# Permette di aggiungere immagini direttamente dalla pagina del prodotto!
-class ImmagineProdottoInline(admin.TabularInline):
-    model = ImmagineProdotto
-    extra = 1
+from .models import Categoria, Prodotto
 
 @admin.register(Categoria)
 class CategoriaAdmin(admin.ModelAdmin):
-    prepopulated_fields = {'slug': ('nome',)} # Compila lo slug in automatico
+    list_display = ('nome', 'categoria_padre')
+    search_fields = ('nome',)
 
 @admin.register(Prodotto)
 class ProdottoAdmin(admin.ModelAdmin):
-    list_display = ('titolo', 'venditore', 'prezzo', 'condizione', 'disponibile', 'data_inserimento')
-    list_filter = ('disponibile', 'categoria', 'condizione')
+    # Colonne visibili nella tabella riassuntiva
+    list_display = ('titolo', 'categoria', 'strumento_riferimento', 'prezzo', 'venditore')
+    # Crea in automatico la barra laterale destra con i filtri!
+    list_filter = ('categoria', 'strumento_riferimento', 'condizione')
     search_fields = ('titolo', 'descrizione')
-    inlines = [ImmagineProdottoInline]

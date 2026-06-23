@@ -8,7 +8,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('catalogo/', include('catalog.urls')),
-    path('', include('catalog.urls')),
     path('404/', TemplateView.as_view(template_name='404.html'))
 ]
 

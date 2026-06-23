@@ -124,7 +124,7 @@
         <h3 style="margin: 0 0 20px 0; color: #333; font-size: 24px; display: flex; align-items: center; gap: 10px;">
             ⭐ Le tue Recensioni
         </h3>
-        <div style="flex: 1; display: flex; align-items: center; justify-content: center; background: #fafafa; border-radius: 25px; color: var(--testo-secondario); font-weight: 500;">
+        <div style="flex: 1; display: flex; align-items: center; justify-content: center; background: #fafafa; border-radius: 25px; color: #555; font-weight: 500;">
             Nessuna recensione al momento.
         </div>
     </div>
@@ -133,16 +133,73 @@
         grid-column: 1 / -1; background: white; padding: 40px; border-radius: 40px; 
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06); display: flex; flex-direction: column; min-height: 300px;
     ">
-        <h3 style="margin: 0 0 20px 0; color: #333; font-size: 24px; display: flex; align-items: center; gap: 10px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+            <h3 style="margin: 0; color: #333; font-size: 24px; display: flex; align-items: center; gap: 10px;">
+                {% if user.profilo.ruolo == 'venditore' %}
+                    📦 I tuoi Annunci online
+                {% else %}
+                    🛍️ I tuoi Ultimi Acquisti
+                {% endif %}
+            </h3>
+            
             {% if user.profilo.ruolo == 'venditore' %}
-                📦 Le tue Ultime Vendite
-            {% else %}
-                🛍️ I tuoi Ultimi Acquisti
+                <a href="{% url 'catalog:aggiungi_prodotto' %}" class="btn-primary" style="padding: 10px 24px; border-radius: 50px; font-size: 14px; text-decoration: none; font-weight: 700;">
+                    + Nuovo Annuncio
+                </a>
             {% endif %}
-        </h3>
-        <div style="flex: 1; display: flex; align-items: center; justify-content: center; background: #fafafa; border-radius: 25px; color: var(--testo-secondario); font-weight: 500;">
-            Nessuna transazione recente trovata.
         </div>
+
+        {% if user.profilo.ruolo == 'venditore' %}
+            
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                {% for prodotto in miei_prodotti %}
+                    <div style="display: flex; background: #fafafa; border-radius: 20px; padding: 20px; border: 1px solid #f0f0f0; align-items: center; gap: 20px; transition: transform 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+                        
+                        <div style="width: 80px; height: 80px; border-radius: 12px; overflow: hidden; background: #e0e0e0; flex-shrink: 0; border: 2px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                            {% if prodotto.immagini.first %}
+                                <img src="{{ prodotto.immagini.first.immagine.url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999; font-weight: bold;">NO FOTO</div>
+                            {% endif %}
+                        </div>
+
+                        <div style="flex-grow: 1;">
+                            <h4 style="margin: 0 0 5px 0; font-size: 18px; color: #333; font-weight: 800;">{{ prodotto.titolo }}</h4>
+                            <div style="font-size: 16px; font-weight: 800; color: #ef6c00; margin-bottom: 6px;">{{ prodotto.prezzo }} €</div>
+                            {% if prodotto.disponibile %}
+                                <span style="font-size: 11px; font-weight: 800; color: #27ae60; background: #e8f8f0; padding: 4px 12px; border-radius: 10px; text-transform: uppercase;">Attivo</span>
+                            {% else %}
+                                <span style="font-size: 11px; font-weight: 800; color: #7f8c8d; background: #f2f4f4; padding: 4px 12px; border-radius: 10px; text-transform: uppercase;">Venduto</span>
+                            {% endif %}
+                        </div>
+
+                        <div style="display: flex; gap: 10px;">
+                            <a href="{% url 'catalog:modifica_prodotto' prodotto.id %}" style="text-decoration: none; font-size: 13px; font-weight: 800; color: #ef6c00; background: #fff0e6; padding: 10px 20px; border-radius: 50px; border: 1px solid #fde4d0; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#fde4d0'" onmouseout="this.style.backgroundColor='#fff0e6'">
+                                Modifica
+                            </a>
+                            
+                            <a href="{% url 'catalog:elimina_prodotto' prodotto.id %}" style="text-decoration: none; font-size: 13px; font-weight: 800; color: #d9534f; background: #fdf2f2; padding: 10px 20px; border-radius: 50px; border: 1px solid #fce8e8; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#fce8e8'" onmouseout="this.style.backgroundColor='#fdf2f2'">
+                                Elimina
+                            </a>
+                        </div>
+                    </div>
+
+                {% empty %}
+                    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fafafa; border-radius: 25px; padding: 50px; border: 1px dashed #e0e0e0;">
+                        <span style="font-size: 45px; margin-bottom: 15px;">🎸</span>
+                        <h4 style="margin: 0 0 8px 0; color: #333; font-size: 20px;">Il tuo palco è vuoto</h4>
+                        <p style="margin: 0; color: #888; font-size: 15px; font-weight: 500;">Non hai ancora messo in vendita nessuno strumento.</p>
+                    </div>
+                {% endfor %}
+            </div>
+
+        {% else %}
+            
+            <div style="flex: 1; display: flex; align-items: center; justify-content: center; background: #fafafa; border-radius: 25px; color: #999; font-weight: 600; border: 1px dashed #e0e0e0;">
+                Nessuna transazione recente trovata.
+            </div>
+
+        {% endif %}
     </div>
 
 </div>

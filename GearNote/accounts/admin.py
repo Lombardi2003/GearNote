@@ -20,5 +20,5 @@ admin.site.register(User, UserAdmin)
 def create_superuser(sender, **kwargs):
     from django.contrib.auth.models import User
     if not User.objects.filter(username='admin').exists():
-        User.objects.create_superuser('admin', 'admin@gear.note', 'password123')
+        User.objects.create_superuser('admin', 'admin@gear.note', 'admin')
         print("Superuser 'admin' creato con successo.")

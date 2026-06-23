@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if prodotto %}Modifica {{ prodotto.titolo }}{% else %}Vendi Strumento{% endif %} - GearNote
+{% endblock %}
+
+{% block content %}
+<style>
+    /* =========================================
+       STILE FORM INSERIMENTO/MODIFICA PRODOTTO 
+       (Tema globale GearNote)
+       ========================================= */
+    .nuovo-annuncio-wrapper {
+        width: 95vw;
+        max-width: 800px;
+        margin: 40px auto;
+    }
+
+    .form-card {
+        background: var(--colore-bianco);
+        padding: 40px 50px;
+        border-radius: 24px; 
+        box-shadow: var(--ombra-scheda);
+    }
+
+    .form-card h2 {
+        margin-top: 0;
+        margin-bottom: 30px;
+        color: var(--testo-titoli);
+        font-size: 26px;
+        font-weight: 800;
+        text-align: center;
+    }
+
+    .campo-gruppo {
+        margin-bottom: 22px;
+    }
+
+    .campo-gruppo label {
+        display: block;
+        font-size: 13px;
+        text-transform: uppercase;
+        color: var(--testo-chiaro);
+        font-weight: 700;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+    }
+
+    /* Stile per input testuali, select e textarea */
+    .campo-gruppo input[type="text"],
+    .campo-gruppo input[type="number"],
+    .campo-gruppo select,
+    .campo-gruppo textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid var(--bordo-input);
+        border-radius: 8px;
+        box-sizing: border-box;
+        font-size: 15px;
+        background-color: var(--colore-bianco);
+        color: var(--testo-base);
+        font-family: inherit;
+        transition: all 0.25s ease-in-out;
+    }
+
+    .campo-gruppo input[type="text"]:hover,
+    .campo-gruppo input[type="number"]:hover,
+    .campo-gruppo select:hover,
+    .campo-gruppo textarea:hover {
+        border-color: #b0b0b0;
+    }
+
+    .campo-gruppo input[type="text"]:focus,
+    .campo-gruppo input[type="number"]:focus,
+    .campo-gruppo select:focus,
+    .campo-gruppo textarea:focus {
+        border-color: var(--arancione-base);
+        box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.18);
+        outline: none;
+    }
+
+    /* Input File personalizzato con stile tratteggiato */
+    .campo-gruppo input[type="file"] {
+        width: 100%;
+        padding: 11px;
+        background-color: #fcfcfc;
+        border: 2px dashed var(--arancione-base);
+        border-radius: 8px;
+        box-sizing: border-box;
+        font-size: 14px;
+        color: var(--testo-secondario);
+        cursor: pointer;
+        transition: all 0.25s ease-in-out;
+    }
+
+    .campo-gruppo input[type="file"]:hover {
+        border-color: var(--arancione-scuro);
+        background-color: #fff8f0;
+    }
+
+    .campo-gruppo input[type="file"]:focus {
+        box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.18);
+        outline: none;
+    }
+
+    .campo-gruppo input[type="file"]::file-selector-button {
+        margin-right: 12px;
+        padding: 8px 14px;
+        border: none;
+        border-radius: 5px;
+        background-color: var(--arancione-base);
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .campo-gruppo input[type="file"]::file-selector-button:hover {
+        background-color: var(--arancione-scuro);
+    }
+
+    .help-text {
+        font-size: 12px;
+        color: var(--testo-chiaro);
+        margin-top: 6px;
+    }
+
+    .error-text {
+        color: var(--rosso-logout);
+        font-size: 13px;
+        margin-top: 6px;
+        font-weight: bold;
+    }
+
+    .azioni-form {
+        display: flex;
+        gap: 15px;
+        margin-top: 35px;
+    }
+
+    .azioni-form .btn-primary {
+        flex: 2;
+        border-radius: 50px;
+        padding: 14px;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-annulla {
+        flex: 1;
+        padding: 14px;
+        border: 2px solid var(--bordo-input);
+        background: transparent;
+        color: var(--testo-secondario);
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: bold;
+        text-align: center;
+        transition: all 0.2s ease;
+    }
+
+    .btn-annulla:hover {
+        background: #f5f5f5;
+        color: var(--testo-base);
+        border-color: #ccc;
+    }
+
+    @media (max-width: 600px) {
+        .form-card {
+            padding: 30px 20px;
+        }
+        .azioni-form {
+            flex-direction: column;
+        }
+    }
+</style>
+
+<div class="nuovo-annuncio-wrapper">
+    <div class="form-card">
+        <h2>
+            {% if prodotto %}
+                Modifica Annuncio
+            {% else %}
+                Pubblica un nuovo annuncio
+            {% endif %}
+        </h2>
+        
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% for field in form %}
+                <div class="campo-gruppo">
+                    <label>{{ field.label }}</label>
+                    
+                    {{ field }}
+                    
+                    {% if field.help_text %}
+                        <div class="help-text">{{ field.help_text }}</div>
+                    {% endif %}
+                    
+                    {% for error in field.errors %}
+                        <div class="error-text">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <div class="azioni-form">
+                <button type="submit" class="btn-primary">
+                    {% if prodotto %}Salva Modifiche{% else %}Pubblica Annuncio{% endif %}
+                </button>
+                <a href="{% url 'accounts:profilo' %}" class="btn-annulla">Annulla</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -48,16 +48,24 @@
 
         <div style="display: flex; gap: 15px; margin-top: 25px;">
             <div style="flex: 1; background: #fff8f3; border: 1px solid #fde4d0; padding: 15px; border-radius: 20px; text-align: center;">
-                <div style="font-size: 24px; font-weight: 800; color: #ef6c00; line-height: 1;">0</div>
+                <div style="font-size: 24px; font-weight: 800; color: #ef6c00; line-height: 1;">
+                    {% if user.profilo.ruolo == 'venditore' %}
+                        {{ numero_vendite }}
+                    {% else %}
+                        {{ miei_ordini|length }}
+                    {% endif %}
+                </div>
                 <div style="font-size: 11px; text-transform: uppercase; color: #d35400; font-weight: 700; margin-top: 6px; letter-spacing: 0.5px;">
                     {% if user.profilo.ruolo == 'venditore' %}Vendite{% else %}Acquisti{% endif %}
                 </div>
             </div>
             
             <div style="flex: 1; background: #fff8f3; border: 1px solid #fde4d0; padding: 15px; border-radius: 20px; text-align: center;">
-                <div style="font-size: 24px; font-weight: 800; color: #ef6c00; line-height: 1;">0</div>
+                <div style="font-size: 24px; font-weight: 800; color: #ef6c00; line-height: 1;">
+                    {% if user.profilo.ruolo == 'venditore' %}{{ recensioni_ricevute|length }}{% else %}{{ request.user.carrello.numero_articoli|default:"0" }}{% endif %}
+                </div>
                 <div style="font-size: 11px; text-transform: uppercase; color: #d35400; font-weight: 700; margin-top: 6px; letter-spacing: 0.5px;">
-                    Recensioni
+                    {% if user.profilo.ruolo == 'venditore' %}Recensioni{% else %}Nel Carrello{% endif %}
                 </div>
             </div>
         </div>
@@ -119,14 +127,70 @@
 
     <div style="
         background: white; padding: 40px; border-radius: 40px; 
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06); display: flex; flex-direction: column;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06); display: flex; flex-direction: column; max-height: 550px;
     ">
-        <h3 style="margin: 0 0 20px 0; color: #333; font-size: 24px; display: flex; align-items: center; gap: 10px;">
-            ⭐ Le tue Recensioni
-        </h3>
-        <div style="flex: 1; display: flex; align-items: center; justify-content: center; background: #fafafa; border-radius: 25px; color: #555; font-weight: 500;">
-            Nessuna recensione al momento.
-        </div>
+        {% if user.profilo.ruolo == 'venditore' %}
+            <h3 style="margin: 0 0 20px 0; color: #333; font-size: 24px; display: flex; align-items: center; gap: 10px;">
+                ⭐ Le tue Recensioni
+            </h3>
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; padding-right: 5px;">
+                {% for recensione in recensioni_ricevute %}
+                    <div style="background: #fafafa; border-radius: 20px; padding: 20px; border: 1px solid #f0f0f0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span style="font-weight: 800; color: #333; font-size: 15px;">@{{ recensione.acquirente.username }}</span>
+                            <span style="color: #ef6c00; font-weight: 800; font-size: 16px;">
+                                {% if recensione.voto == 1 %}⭐
+                                {% elif recensione.voto == 2 %}⭐⭐
+                                {% elif recensione.voto == 3 %}⭐⭐⭐
+                                {% elif recensione.voto == 4 %}⭐⭐⭐⭐
+                                {% elif recensione.voto == 5 %}⭐⭐⭐⭐⭐
+                                {% endif %}
+                            </span>
+                        </div>
+                        <p style="margin: 0; color: #555; font-size: 14px; line-height: 1.5; font-style: italic;">"{{ recensione.testo }}"</p>
+                        <div style="font-size: 11px; color: #aaa; margin-top: 10px; font-weight: 600;">{{ recensione.data_creazione|date:"d/m/Y" }}</div>
+                    </div>
+                {% empty %}
+                    <div style="flex: 1; display: flex; align-items: center; justify-content: center; background: #fafafa; border-radius: 25px; color: #555; font-weight: 500; padding: 40px;">
+                        Nessuna recensione al momento.
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <h3 style="margin: 0 0 20px 0; color: #333; font-size: 24px; display: flex; align-items: center; gap: 10px;">
+                🛒 Il tuo Carrello
+            </h3>
+            <div style="flex: 1; display: flex; flex-direction: column; background: #fafafa; border-radius: 25px; padding: 20px; overflow-y: auto;">
+                {% if request.user.carrello.elementi.all %}
+                    <ul style="list-style: none; padding: 0; margin: 0 0 15px 0; display: flex; flex-direction: column; gap: 12px;">
+                        {% for elemento in request.user.carrello.elementi.all %}
+                            <li style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid #eee;">
+                                <span style="font-size: 14px; font-weight: 700; color: #333;">{{ elemento.prodotto.titolo }}</span>
+                                <span style="font-size: 15px; font-weight: 800; color: #ef6c00;">{{ elemento.prodotto.prezzo }} €</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 15px; border-top: 2px solid #fde4d0; padding-top: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 16px; font-weight: 800; color: #333;">Totale:</span>
+                            <span style="font-size: 20px; font-weight: 900; color: #ef6c00;">{{ request.user.carrello.totale_carrello }} €</span>
+                        </div>
+                        <a href="{% url 'cart:vedi_carrello' %}" style="
+                            padding: 12px 24px; background: #ef6c00; color: white; border-radius: 50px; 
+                            font-size: 14px; font-weight: 700; text-decoration: none; text-align: center; transition: 0.2s;
+                        " onmouseover="this.style.backgroundColor='#e65c00'" onmouseout="this.style.backgroundColor='#ef6c00'">
+                            Vai al Checkout
+                        </a>
+                    </div>
+                {% else %}
+                    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #888;">
+                        <span style="font-size: 40px; margin-bottom: 15px; opacity: 0.5;">🛒</span>
+                        <p style="margin: 0; font-size: 16px; font-weight: 600; color: #555;">Carrello vuoto.</p>
+                        <a href="{% url 'catalog:lista' %}" style="margin-top: 15px; color: #ef6c00; font-weight: 800; text-decoration: none; font-size: 14px;">Inizia lo shopping</a>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
     </div>
 
     <div style="
@@ -172,13 +236,19 @@
                         </div>
 
                         <div style="display: flex; gap: 10px;">
-                            <a href="{% url 'catalog:modifica_prodotto' prodotto.id %}" style="text-decoration: none; font-size: 13px; font-weight: 800; color: #ef6c00; background: #fff0e6; padding: 10px 20px; border-radius: 50px; border: 1px solid #fde4d0; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#fde4d0'" onmouseout="this.style.backgroundColor='#fff0e6'">
-                                Modifica
-                            </a>
-                            
-                            <a href="{% url 'catalog:elimina_prodotto' prodotto.id %}" style="text-decoration: none; font-size: 13px; font-weight: 800; color: #d9534f; background: #fdf2f2; padding: 10px 20px; border-radius: 50px; border: 1px solid #fce8e8; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#fce8e8'" onmouseout="this.style.backgroundColor='#fdf2f2'">
-                                Elimina
-                            </a>
+                            {% if prodotto.disponibile %}
+                                <a href="{% url 'catalog:modifica_prodotto' prodotto.id %}" style="text-decoration: none; font-size: 13px; font-weight: 800; color: #ef6c00; background: #fff0e6; padding: 10px 20px; border-radius: 50px; border: 1px solid #fde4d0; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#fde4d0'" onmouseout="this.style.backgroundColor='#fff0e6'">
+                                    Modifica
+                                </a>
+                                
+                                <a href="{% url 'catalog:elimina_prodotto' prodotto.id %}" style="text-decoration: none; font-size: 13px; font-weight: 800; color: #d9534f; background: #fdf2f2; padding: 10px 20px; border-radius: 50px; border: 1px solid #fce8e8; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#fce8e8'" onmouseout="this.style.backgroundColor='#fdf2f2'">
+                                    Elimina
+                                </a>
+                            {% else %}
+                                <span style="font-size: 13px; font-weight: 800; color: #7f8c8d; background: #f2f4f4; padding: 10px 20px; border-radius: 50px; border: 1px solid #e5e8e8; cursor: not-allowed;">
+                                    🔒 Annuncio Archiviato
+                                </span>
+                            {% endif %}
                         </div>
                     </div>
 

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Scrivi Recensione - GearNote{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 60px auto;">
+    <div style="background: white; padding: 40px; border-radius: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.06); text-align: center;">
+        
+        <span style="font-size: 50px;">⭐</span>
+        <h2 style="color: #333; margin: 10px 0 5px 0;">Valuta @{{ venditore.username }}</h2>
+        <p style="color: #888; font-size: 15px; margin-bottom: 30px;">La tua opinione aiuta la community a fare acquisti sicuri.</p>
+
+        <form method="POST" style="text-align: left;">
+            {% csrf_token %}
+            
+            {{ form.voto.label_tag }}
+            {{ form.voto }}
+            
+            {{ form.testo.label_tag }}
+            {{ form.testo }}
+            
+            <button type="submit" style="width: 100%; padding: 15px; background: #ef6c00; color: white; border: none; border-radius: 50px; font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.2s;" onmouseover="this.style.backgroundColor='#e65c00'" onmouseout="this.style.backgroundColor='#ef6c00'">
+                Pubblica Recensione
+            </button>
+        </form>
+        
+        <div style="margin-top: 20px;">
+            <a href="{% url 'accounts:profilo' %}" style="color: #888; text-decoration: none; font-size: 14px; font-weight: 600;">Annulla</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

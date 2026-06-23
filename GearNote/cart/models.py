@@ -51,6 +51,9 @@ class Ordine(models.Model):
 class ElementoOrdine(models.Model):
     ordine = models.ForeignKey(Ordine, on_delete=models.CASCADE, related_name='elementi')
     prodotto = models.ForeignKey('catalog.Prodotto', on_delete=models.SET_NULL, null=True) 
+    
+    venditore = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='prodotti_venduti')
+    
     prezzo_pagato = models.DecimalField(max_digits=10, decimal_places=2) 
 
     def __str__(self):

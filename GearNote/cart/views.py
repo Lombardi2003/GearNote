@@ -3,8 +3,7 @@ from django.contrib.auth.decorators import login_required
 from catalog.models import Prodotto
 from .models import Carrello, ElementoCarrello, Ordine, ElementoOrdine
 from django.db import transaction
-        
-
+from django.contrib import messages
 
 @login_required(login_url='accounts:login')
 def aggiungi_al_carrello(request):
@@ -56,8 +55,6 @@ def rimuovi_dal_carrello(request):
     return redirect('cart:vedi_carrello')
 
 
-from django.contrib import messages
-
 @login_required(login_url='accounts:login')
 def checkout(request):
     try:
@@ -80,7 +77,6 @@ def checkout(request):
             messages.error(request, "Per favore, controlla i dati inseriti (nome troppo corto o CAP non valido).")
             return render(request, 'cart/checkout.html', {'carrello': carrello})
 
-        
         with transaction.atomic():
             ordine = Ordine.objects.create(
                 utente=request.user,
@@ -95,6 +91,7 @@ def checkout(request):
                 ElementoOrdine.objects.create(
                     ordine=ordine,
                     prodotto=item.prodotto,
+                    venditore=item.prodotto.venditore,  # 🌟 Salva il venditore
                     prezzo_pagato=item.prodotto.prezzo
                 )
                 item.prodotto.disponibile = False
@@ -102,6 +99,21 @@ def checkout(request):
 
             elementi.delete()
 
-        return redirect('accounts:profilo')
+        # 🌟 MODIFICA QUI: Rimanda alla pagina di successo invece che al profilo
+        return redirect('cart:successo', ordine_id=ordine.id)
 
     return render(request, 'cart/checkout.html', {'carrello': carrello})
+
+# 🌟 NUOVA VISTA: Pagina di Ordine Confermato
+@login_required(login_url='accounts:login')
+def checkout_success(request, ordine_id):
+    # Recuperiamo l'ordine appena fatto per mostrare il totale e l'ID
+    ordine = get_object_or_404(Ordine, id=ordine_id, utente=request.user)
+    
+    # Estraiamo i venditori unici da cui ha comprato in questo ordine
+    venditori = set([elemento.venditore for elemento in ordine.elementi.all() if elemento.venditore])
+    
+    return render(request, 'cart/successo.html', {
+        'ordine': ordine,
+        'venditori': venditori
+    })

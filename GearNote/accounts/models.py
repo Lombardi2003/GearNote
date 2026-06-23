@@ -28,3 +28,16 @@ class Profilo(models.Model):
         if self.foto_profilo and hasattr(self.foto_profilo, 'url'):
             return self.foto_profilo.url
         return '/static/img/avatar.svg'
+    
+class Recensione(models.Model):
+    # Chi riceve la recensione (il venditore)
+    venditore = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recensioni_ricevute')
+    # Chi scrive la recensione (l'acquirente)
+    acquirente = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recensioni_scritte')
+    
+    voto = models.PositiveIntegerField(choices=[(i, str(i)) for i in range(1, 6)]) # Da 1 a 5
+    testo = models.TextField()
+    data_creazione = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.voto}/5 stelle da {self.acquirente.username} a {self.venditore.username}"

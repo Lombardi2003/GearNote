@@ -5,6 +5,7 @@ from django.contrib.auth.models import User, Group
 from .models import Profilo
 from django.conf import settings
 import os
+from .models import Recensione
 
 class ValidazioneProfiloMixin:
     def clean_eta(self):
@@ -151,3 +152,22 @@ class ModificaProfiloForm(ValidazioneProfiloMixin, forms.ModelForm):
             profilo.save()
             
         return profilo
+    
+class RecensioneForm(forms.ModelForm):
+    class Meta:
+        model = Recensione
+        fields = ['voto', 'testo']
+        widgets = {
+            'voto': forms.Select(attrs={
+                'style': 'width: 100%; padding: 15px; border-radius: 15px; border: 1px solid #fde4d0; background: #fff8f3; font-size: 16px; font-weight: 700; color: #ef6c00; margin-bottom: 20px;'
+            }),
+            'testo': forms.Textarea(attrs={
+                'style': 'width: 100%; padding: 15px; border-radius: 15px; border: 1px solid #ccc; font-size: 14px; margin-bottom: 20px; font-family: inherit;',
+                'rows': 4,
+                'placeholder': 'Racconta la tua esperienza (es. Spedizione veloce, strumento in ottime condizioni...)'
+            }),
+        }
+        labels = {
+            'voto': 'Voto (da 1 a 5 Stelle)',
+            'testo': 'La tua recensione'
+        }

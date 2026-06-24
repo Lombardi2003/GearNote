@@ -6,137 +6,249 @@
 {% block content %}
 
 <style>
-  *, *::before, *::after { box-sizing: border-box; }
-  body { margin: 0; padding: 0; overflow-x: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    /* Reset & Base */
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; padding: 0; background-color: #fcfcfc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    
+    /* Layout Allargato */
+    .gn-container { width: 100%; max-width: 1600px; margin: -50px auto; }
 
-  .gn-ticker-wrap { overflow: hidden; background: #ef6c00; padding: 10px 0; }
-  .gn-ticker-track { display: flex; white-space: nowrap; width: max-content; animation: gn-ticker 28s linear infinite; }
-  .gn-ticker-track span { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,0.85); padding: 0 20px; }
-  .gn-ticker-track span.dot { color: rgba(255,255,255,0.35); padding: 0; }
-  @keyframes gn-ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    /* Hero Section con Sfumatura Radiale */
+    .gn-hero-wrapper {
+        background: radial-gradient(circle at 50% -20%, #ffeadb 0%, #fcfcfc 70%);
+        padding: 120px 20px 80px;
+        text-align: center;
+    }
+    .gn-hero-title {
+        font-size: clamp(3.5rem, 8vw, 5.5rem);
+        font-weight: 900;
+        letter-spacing: -2.5px;
+        color: #111;
+        margin: 0 0 20px;
+        line-height: 1.05;
+    }
+    .gn-hero-title em {
+        color: #ef6c00;
+        font-style: normal;
+        position: relative;
+    }
+    .gn-hero-title em::after {
+        content: '';
+        position: absolute;
+        bottom: 8px; left: 0; width: 100%; height: 8px;
+        background: rgba(239, 108, 0, 0.2);
+        border-radius: 4px;
+        z-index: -1;
+    }
+    .gn-hero-subtitle {
+        font-size: 1.25rem;
+        color: #666;
+        max-width: 650px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
 
-  .gn-hero {
-    width: 100%;
-    padding: 100px 5%;
-    text-align: center;
-    background: #fff8f3;
-  }
-  .gn-eyebrow { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: #ef6c00; margin-bottom: 22px; }
-  .gn-hero h1 { font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px; color: #1a1a1a; margin: 0 0 24px; }
-  .gn-hero h1 em { font-style: normal; color: #ef6c00; }
-  .gn-hero p { font-size: 18px; color: #888; line-height: 1.7; max-width: 600px; margin: 0 auto 40px; }
-  
-  .gn-btn-primary { padding: 16px 36px; background: #ef6c00; color: white; font-weight: 700; font-size: 16px; border-radius: 100px; text-decoration: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
-  .gn-btn-primary:hover { background: #d95f00; transform: translateY(-2px); color: white; text-decoration: none; }
+    /* Griglia Prodotti */
+    .gn-section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 30px;
+    }
+    .gn-section-title { font-size: 2.2rem; font-weight: 900; color: #111; margin: 0; letter-spacing: -1px; }
+    .gn-link-all { font-weight: 700; color: #ef6c00; text-decoration: none; font-size: 1.1rem; transition: opacity 0.2s; }
+    .gn-link-all:hover { opacity: 0.8; }
 
-  .gn-section { width: 90%; margin: 60px auto; }
-  .gn-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-  .gn-section-label { font-size: 24px; font-weight: 800; color: #1a1a1a; }
-  .gn-see-all { font-size: 14px; font-weight: 700; color: #ef6c00; text-decoration: none; }
+    .gn-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 32px;
+        margin-bottom: 80px;
+    }
 
-  .gn-listings { background: white; border-radius: 24px; border: 1px solid #f0f0f0; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.04); }
-  .gn-listing-row { display: flex; align-items: center; gap: 16px; padding: 18px 24px; border-bottom: 1px solid #f5f5f5; transition: background 0.12s; text-decoration: none; color: inherit; }
-  .gn-listing-row:last-child { border-bottom: none; }
-  .gn-listing-row:hover { background: #fff8f3; }
-  
-  .gn-listing-img { width: 68px; height: 68px; border-radius: 14px; background: #f5f5f5; flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-  .gn-listing-img img { width: 100%; height: 100%; object-fit: cover; }
-  
-  .gn-listing-info { flex: 1; min-width: 0; }
-  .gn-listing-title { font-size: 16px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
-  .gn-listing-meta { font-size: 12px; color: #888; display: flex; align-items: center; gap: 8px; }
-  .gn-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 9px; border-radius: 5px; background: #eee; }
-  
-  .gn-listing-price { text-align: right; }
-  .gn-price-val { font-size: 18px; font-weight: 900; color: #ef6c00; display: block; }
+    /* Card Prodotto Stile Apple/Boutique */
+    .gn-card {
+        background: white;
+        border-radius: 28px;
+        padding: 16px;
+        border: 1px solid #f0f0f0;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        display: flex;
+        flex-direction: column;
+    }
+    .gn-card:hover {
+        box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+        transform: translateY(-5px);
+        border-color: transparent;
+    }
+    .gn-card-img-wrapper {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        border-radius: 20px;
+        overflow: hidden;
+        background: #f8f8f8;
+        position: relative;
+        margin-bottom: 20px;
+    }
+    .gn-card-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    .gn-card:hover .gn-card-img {
+        transform: scale(1.05); /* Effetto zoom bellissimo all'hover */
+    }
+    .gn-badge-new {
+        position: absolute;
+        top: 12px; left: 12px;
+        background: rgba(255,255,255,0.95);
+        backdrop-filter: blur(4px);
+        padding: 6px 12px;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: #111;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    }
+    
+    .gn-card-info { padding: 0 8px; display: flex; flex-direction: column; flex-grow: 1; }
+    .gn-card-seller { font-size: 0.85rem; color: #888; font-weight: 600; margin-bottom: 4px; }
+    .gn-card-title { font-size: 1.25rem; font-weight: 800; color: #111; line-height: 1.3; margin-bottom: auto; }
+    .gn-card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid #f5f5f5; }
+    .gn-card-price { font-size: 1.4rem; font-weight: 900; color: #ef6c00; }
+    .gn-btn-buy { background: #fff4ec; color: #ef6c00; padding: 8px 16px; border-radius: 50px; font-weight: 800; font-size: 0.9rem; }
+    .gn-card:hover .gn-btn-buy { background: #ef6c00; color: white; }
 
-  .gn-sell-cta { width: 90%; margin: 60px auto 80px; background: #1a1a1a; border-radius: 32px; padding: 60px; display: flex; align-items: center; justify-content: space-between; gap: 40px; color: white; }
-  .gn-sell-copy h2 { font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 900; margin: 0 0 10px; }
-  .gn-sell-copy h2 em { font-style: normal; color: #ef6c00; }
-  .gn-btn-sell { padding: 16px 36px; background: #ef6c00; color: white; font-weight: 700; border-radius: 100px; text-decoration: none; white-space: nowrap; }
+    /* Features Section */
+    .gn-features {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin: 80px 0;
+    }
+    .gn-feature-box { text-align: center; padding: 40px 20px; background: white; border-radius: 32px; border: 1px solid #f0f0f0; }
+    .gn-feature-icon { font-size: 3rem; margin-bottom: 20px; display: inline-block; }
+    .gn-feature-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 10px; color: #111; }
+    .gn-feature-text { font-size: 1rem; color: #666; line-height: 1.5; }
 
-  @media (max-width: 768px) {
-    .gn-sell-cta { flex-direction: column; align-items: flex-start; padding: 40px; }
-  }
+    /* Dark CTA Banner */
+    .gn-cta-dark {
+        background: #111;
+        border-radius: 40px;
+        padding: 80px 60px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 40px;
+        margin-bottom: 80px;
+        position: relative;
+        overflow: hidden;
+    }
+    .gn-cta-dark::before {
+        content: ''; position: absolute; top: -50%; right: -10%; width: 500px; height: 500px;
+        background: radial-gradient(circle, rgba(239,108,0,0.15) 0%, rgba(0,0,0,0) 70%);
+        border-radius: 50%; pointer-events: none;
+    }
+    .gn-cta-content h2 { color: white; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; margin: 0 0 15px; letter-spacing: -1px; line-height: 1.1; }
+    .gn-cta-content p { color: #888; font-size: 1.2rem; margin: 0; max-width: 500px; line-height: 1.6; }
+    .gn-btn-action {
+        background: #ef6c00; color: white; padding: 20px 40px; border-radius: 50px;
+        font-size: 1.1rem; font-weight: 800; text-decoration: none; transition: transform 0.2s, background 0.2s;
+        box-shadow: 0 10px 30px rgba(239, 108, 0, 0.3); white-space: nowrap;
+        z-index: 1; /* Assicura che il bottone stia sopra il gradiente */
+    }
+    .gn-btn-action:hover { transform: scale(1.05); background: #f57c00; }
+
+    @media (max-width: 768px) {
+        .gn-cta-dark { padding: 40px; flex-direction: column; text-align: center; }
+    }
 </style>
 
-<div class="gn-ticker-wrap">
-  <div class="gn-ticker-track" id="gn-ticker"></div>
+<!-- HERO SECTION -->
+<div class="gn-hero-wrapper">
+    <div class="gn-container">
+        <h1 class="gn-hero-title">Lo strumento giusto<br>per la tua <em>musica</em></h1>
+        <p class="gn-hero-subtitle">Il marketplace premium per l'usato musicale. Compra e vendi chitarre, synth e fiati tra appassionati, senza commissioni nascoste.</p>
+    </div>
 </div>
 
-<div class="gn-hero">
-  <span class="gn-eyebrow">GearNote — Marketplace musicale</span>
-  <h1>Lo strumento giusto<br>per la tua <em>musica</em></h1>
-  <p>Compra e vendi strumenti usati in totale sicurezza. Tra musicisti veri, senza sorprese.</p>
-  <a href="{% url 'catalog:lista' %}" class="gn-btn-primary">Esplora il catalogo →</a>
-</div>
+<div class="gn-container">
 
-<div class="gn-section">
-  <div class="gn-section-header">
-    <div class="gn-section-label">Ultimi arrivi</div>
-    <a href="{% url 'catalog:lista' %}" class="gn-see-all">Vedi tutti →</a>
-  </div>
+    <!-- SEZIONE ULTIMI ARRIVI -->
+    <div class="gn-section-header" style="margin-top: 40px;">
+        <h2 class="gn-section-title">Nuovi Arrivi</h2>
+        <a href="{% url 'catalog:lista' %}" class="gn-link-all">Vedi il catalogo →</a>
+    </div>
 
-  {% if prodotti_recenti %}
-  <div class="gn-listings">
-    {% for prodotto in prodotti_recenti %}
-    <a href="{% url 'catalog:dettaglio' prodotto.id %}" class="gn-listing-row">
-      <div class="gn-listing-img">
-        {% if prodotto.immagine_principale %}
-          <img src="{{ prodotto.immagine_principale }}" alt="{{ prodotto.titolo }}">
-        {% else %}
-          🎵
-        {% endif %}
-      </div>
-      <div class="gn-listing-info">
-        <div class="gn-listing-title">{{ prodotto.titolo }}</div>
-        <div class="gn-listing-meta">
-          <span>@{{ prodotto.venditore.username }}</span>
-          <span class="gn-badge">{{ prodotto.categoria|capfirst }}</span>
+    <div class="gn-grid">
+        {% for prodotto in prodotti_recenti %}
+        <a href="{% url 'catalog:dettaglio' prodotto.id %}" class="gn-card">
+            <div class="gn-card-img-wrapper">
+                <div class="gn-badge-new">{{ prodotto.categoria|capfirst }}</div>
+                {% if prodotto.immagine_principale %}
+                    <img src="{{ prodotto.immagine_principale }}" alt="{{ prodotto.titolo }}" class="gn-card-img">
+                {% else %}
+                    <div style="display:flex; align-items:center; justify-content:center; height:100%; font-size: 4rem; opacity: 0.2;">🎵</div>
+                {% endif %}
+            </div>
+            <div class="gn-card-info">
+                <span class="gn-card-seller">Venduto da @{{ prodotto.venditore.username }}</span>
+                <h3 class="gn-card-title">{{ prodotto.titolo }}</h3>
+                <div class="gn-card-footer">
+                    <span class="gn-card-price">{{ prodotto.prezzo }} €</span>
+                    <span class="gn-btn-buy">Vedi</span>
+                </div>
+            </div>
+        </a>
+        {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 100px 20px; background: white; border-radius: 32px; border: 1px dashed #e0e0e0; color: #888;">
+            <span style="font-size: 3rem; display:block; margin-bottom: 15px;">🎸</span>
+            <p style="margin:0; font-weight:600; font-size: 1.2rem;">Il palco è ancora vuoto. Nessun annuncio al momento.</p>
         </div>
-      </div>
-      <div class="gn-listing-price">
-        <span class="gn-price-val">{{ prodotto.prezzo }} €</span>
-      </div>
-    </a>
-    {% endfor %}
-  </div>
-  {% else %}
-  <div style="text-align: center; padding: 60px; background: #fafafa; border-radius: 24px; border: 1px dashed #e0e0e0; color: #888;">
-    <p style="margin:0; font-weight:600;">Il palco è ancora vuoto.</p>
-  </div>
-  {% endif %}
-</div>
+        {% endfor %}
+    </div>
 
-<div class="gn-sell-cta">
-  <div class="gn-sell-copy">
-    {% if not user.profilo.ruolo == 'venditore' %}
-      <h2>Hai uno strumento<br><em>fermo in casa?</em></h2>
-      <p>Registrati come venditore e pubblica il tuo annuncio in pochi minuti.</p>
-    {% else %}
-      <h2>Pronto a<br><em>vendere?</em></h2>
-      <p>Aggiungi un nuovo strumento e raggiungi migliaia di musicisti.</p>
-    {% endif %}
-  </div>
-  
-  {% if not user.profilo.ruolo == 'venditore' %}
-    <a href="{% url 'accounts:registrati' %}" class="gn-btn-sell">Inizia a vendere →</a>
-  {% else %}
-    <a href="{% url 'catalog:aggiungi_prodotto' %}" class="gn-btn-sell">+ Aggiungi annuncio</a>
-  {% endif %}
-</div>
+    <!-- SEZIONE FEATURES -->
+    <div class="gn-features">
+        <div class="gn-feature-box">
+            <span class="gn-feature-icon">🤝</span>
+            <h3 class="gn-feature-title">Community Reale</h3>
+            <p class="gn-feature-text">Compra e vendi solo con veri musicisti. Leggi le recensioni dei venditori e fai affari in totale serenità.</p>
+        </div>
+        <div class="gn-feature-box">
+            <span class="gn-feature-icon">🛡️</span>
+            <h3 class="gn-feature-title">Trasparenza Totale</h3>
+            <p class="gn-feature-text">Nessun costo nascosto. Le condizioni degli strumenti sono chiare e documentate dalle foto.</p>
+        </div>
+        <div class="gn-feature-box">
+            <span class="gn-feature-icon">⚡</span>
+            <h3 class="gn-feature-title">Veloce & Intuitivo</h3>
+            <p class="gn-feature-text">Che tu voglia svuotare lo studio o cercare quel pedale introvabile, bastano pochi clic.</p>
+        </div>
+    </div>
 
-<script>
-(function() {
-  var items = ['Chitarre','Bassi','Amplificatori','Tastiere','Synth','Sax','Batterie','Effetti','Microfoni','Interfacce Audio'];
-  var html = '';
-  var doubled = items.concat(items);
-  doubled.forEach(function(item) {
-    html += '<span>' + item + '</span><span class="dot">·</span>';
-  });
-  var track = document.getElementById('gn-ticker');
-  if (track) track.innerHTML = html;
-})();
-</script>
+    <!-- CTA FOOTER DINAMICA -->
+    <div class="gn-cta-dark">
+        <div class="gn-cta-content">
+            {% if not user.profilo.ruolo == 'venditore' %}
+                <h2>Fai spazio nel<br>tuo studio.</h2>
+                <p>Migliaia di musicisti stanno cercando proprio lo strumento che tu non usi più. Registrati e pubblica il tuo primo annuncio in meno di 2 minuti.</p>
+            {% else %}
+                <h2>Il palco è tuo.</h2>
+                <p>Gestisci i tuoi strumenti, crea nuovi annunci e rispondi agli acquirenti direttamente dalla tua area personale.</p>
+            {% endif %}
+        </div>
+        
+        {% if not user.profilo.ruolo == 'venditore' %}
+            <a href="{% url 'accounts:registrati' %}" class="gn-btn-action">Diventa Venditore</a>
+        {% else %}
+            <a href="{% url 'catalog:aggiungi_prodotto' %}" class="gn-btn-action">+ Crea Annuncio</a>
+        {% endif %}
+    </div>
+
+</div>
 
 {% endblock content %}

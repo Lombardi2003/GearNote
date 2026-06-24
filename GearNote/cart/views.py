@@ -16,6 +16,11 @@ def aggiungi_al_carrello(request):
         prodotto_id = request.POST.get('prodotto_id')
         prodotto = get_object_or_404(Prodotto, id=prodotto_id)
 
+        # 🔒 BLOCCO DI SICUREZZA 2.5: Il prodotto è ancora disponibile?
+        if not prodotto.disponibile:
+            messages.error(request, "Spiacenti, questo strumento è già stato venduto o rimosso.")
+            return redirect('catalog:lista')
+
         # 3. Prende il carrello dell'utente
         carrello, created = Carrello.objects.get_or_create(utente=request.user)
 

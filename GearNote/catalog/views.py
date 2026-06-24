@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q 
 from .models import Prodotto, Categoria, ImmagineProdotto, Condizione  
 from .forms import ProdottoForm
+from django.contrib import messages
 
 # --- VISTA CATALOGO (Ricerca e Filtri Dinamici) ---
 def lista_prodotti(request, slug_categoria=None):
@@ -50,8 +51,15 @@ def dettaglio_prodotto(request, id):
 
 
 # --- VISTA AGGIUNGI PRODOTTO ---
+# --- VISTA AGGIUNGI PRODOTTO ---
 @login_required(login_url='/accounts/login/') 
 def aggiungi_prodotto(request):
+    
+    # 🔒 BLOCCO DI SICUREZZA: Verifica che l'utente sia effettivamente un venditore
+    if not hasattr(request.user, 'profilo') or request.user.profilo.ruolo != 'venditore':
+        messages.error(request, "Accesso negato. Solo i venditori possono creare annunci.")
+        return redirect('home') 
+    
     if request.method == 'POST':
         form = ProdottoForm(request.POST, request.FILES)
         

@@ -11,35 +11,47 @@ def lista_prodotti(request, slug_categoria=None):
     categorie_principali = Categoria.objects.filter(categoria_padre__isnull=True)
     condizioni = Condizione.objects.filter(prodotti__disponibile=True).distinct()
 
+    # Funzione di utilità per ricorsione
+    def get_tutti_i_discendenti(cat):
+        lista_ids = [cat.id]
+        for sottocategoria in cat.sottocategorie.all():
+            lista_ids.extend(get_tutti_i_discendenti(sottocategoria))
+        return lista_ids
+
+    # 1. Recupero parametri
     query_ricerca = request.GET.get('q')
     prezzo_min = request.GET.get('min_prezzo')
     prezzo_max = request.GET.get('max_prezzo')
     condizione_id = request.GET.get('condizione')
+    categoria_id_get = request.GET.get('categoria')
 
+    # 2. Gestione Categoria (priorità allo slug, poi al filtro GET)
+    cat_selezionata_id = None
     if slug_categoria:
         categoria_scelta = get_object_or_404(Categoria, slug=slug_categoria)
-        
-        def get_tutti_i_discendenti(cat):
-            lista_ids = [cat.id]
-            for sottocategoria in cat.sottocategorie.all():
-                lista_ids.extend(get_tutti_i_discendenti(sottocategoria))
-            return lista_ids
+        cat_selezionata_id = categoria_scelta.id
+        prodotti = prodotti.filter(categoria__id__in=get_tutti_i_discendenti(categoria_scelta))
+    elif categoria_id_get:
+        cat_selezionata_id = int(categoria_id_get)
+        categoria_scelta = Categoria.objects.get(id=cat_selezionata_id)
+        prodotti = prodotti.filter(categoria__id__in=get_tutti_i_discendenti(categoria_scelta))
 
-        tutti_gli_ids = get_tutti_i_discendenti(categoria_scelta)
-        prodotti = prodotti.filter(categoria__id__in=tutti_gli_ids)
-        cat_selezionata_id = categoria_scelta.id                            # Per il template
-    else:
-        categoria_id = request.GET.get('categoria')
-        cat_selezionata_id = int(categoria_id) if categoria_id else None
-        if categoria_id:
-            categoria_scelta = Categoria.objects.get(id=categoria_id)
+    # 3. Applicazione Filtri Extra
+    if query_ricerca:
+        prodotti = prodotti.filter(Q(titolo__icontains=query_ricerca) | Q(descrizione__icontains=query_ricerca))
+    if prezzo_min:
+        prodotti = prodotti.filter(prezzo__gte=prezzo_min)
+    if prezzo_max:
+        prodotti = prodotti.filter(prezzo__lte=prezzo_max)
+    if condizione_id:
+        prodotti = prodotti.filter(condizione__id=condizione_id)
     
     context = {
         'prodotti': prodotti,
         'categorie_principali': categorie_principali,
         'condizioni': condizioni,
         'cat_selezionata': cat_selezionata_id,
-        'cond_selezionata': condizione_id,
+        'cond_selezionata': int(condizione_id) if condizione_id else None,
         'q': query_ricerca,
     }
     return render(request, 'catalog/lista.html', context)
